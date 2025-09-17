@@ -3,7 +3,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
-      installer(new Install::Installer(":/resources")) {
+    installer(new Install::Installer) {
   ui->setupUi(this);
 }
 

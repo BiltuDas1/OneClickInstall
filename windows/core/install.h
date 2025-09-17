@@ -12,7 +12,7 @@ namespace Install {
 			const QString msiInstaller = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/msi.cmd";
 
 		public:
-			Installer(const QString resourcePath);
+            Installer();
 			void Install(QObject *window, const QString msiPath, std::function<void()> postFunc);
 			~Installer();
 	};

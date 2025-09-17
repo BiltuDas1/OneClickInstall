@@ -14,22 +14,22 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 # Root
 set(SRC_MAIN
-    src/main.cpp
+    windows/main.cpp
 )
 
 # Groups
 set(SRC_UI
-    src/ui/mainwindow.h
-    src/ui/mainwindow_includes.h
-    src/ui/mainwindow.cpp
-    src/ui/mainwindow.ui
-    src/ui/buttons/install.cpp
-    src/ui/buttons/browse.cpp
+    windows/ui/mainwindow.h
+    windows/ui/mainwindow_includes.h
+    windows/ui/mainwindow.cpp
+    windows/ui/mainwindow.ui
+    windows/ui/buttons/install.cpp
+    windows/ui/buttons/browse.cpp
 )
 
 set(SRC_CORE
-    src/core/install.h
-    src/core/install.cpp
+    windows/core/install.h
+    windows/core/install.cpp
 )
 
 set(PROJECT_SOURCES
@@ -47,7 +47,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(OneClickInstall
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        scripts.qrc
+        resources.qrc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET OneClickInstall APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

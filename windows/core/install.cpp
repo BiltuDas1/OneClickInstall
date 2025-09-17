@@ -4,9 +4,8 @@
 #include <QProcess>
 
 /// @brief Unpacks all the scripts from resources and store it into temp directory
-/// @param resourcePath The path where the scripts exist
-Install::Installer::Installer(const QString resourcePath) {
-  QFile msiScript(resourcePath + "/scripts/msi.cmd");
+Install::Installer::Installer() {
+  QFile msiScript(":/scripts/msi.cmd");
 
   // msi Script
   if(msiScript.open(QIODevice::ReadOnly)) {
