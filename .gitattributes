@@ -1,0 +1,11 @@
+# Convert all source files to use LF
+*.cpp text eol=lf
+*.h   text eol=lf
+*.ui  text eol=lf
+*.qrc text eol=lf
+*.rc  text eol=lf
+*.manifest text eol=lf
+
+# Keep batch scripts CRLF (don’t convert)
+*.bat text eol=crlf
+*.cmd text eol=crlf
