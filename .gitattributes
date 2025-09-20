@@ -5,7 +5,12 @@
 *.qrc text eol=lf
 *.rc  text eol=lf
 *.manifest text eol=lf
+Dockerfile* text eol=lf
+*.md text eol=lf
 
 # Keep batch scripts CRLF (don’t convert)
 *.bat text eol=crlf
 *.cmd text eol=crlf
+
+# Detects Dockerfile.<suffix> as Dockerfile
+Dockerfile* linguist-language=Dockerfile
