@@ -85,3 +85,6 @@ CMakeLists.txt.user*
 
 # Resource file
 !OneClickInstall.rc
+
+# Docker
+docker-compose.yml
