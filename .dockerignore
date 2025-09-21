@@ -1,5 +1,7 @@
 .*
 LICENSE
 *.md
-build
+build/
+dist/
 docker-compose.yml
+__pycache__/
