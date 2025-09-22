@@ -25,7 +25,4 @@ COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry install --with dev --no-root
 
-# Enable CMake Colored text
-ENV CMAKE_COLOR_DIAGNOSTICS=ON
-
 ENTRYPOINT [ "/bin/bash", "debug.sh" ]
