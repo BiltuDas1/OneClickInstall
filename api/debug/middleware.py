@@ -3,6 +3,8 @@ from fastapi.responses import StreamingResponse
 from starlette.middleware.base import _StreamingResponse
 from ..server import app
 from .semaphore import AsyncFileSemaphore
+import signal
+import os
 
 
 RELOAD_SNIPPET = "<script>new EventSource('/events').onmessage = e => e.data === 'reload' && window.location.reload(true);</script>\n"
@@ -45,3 +47,10 @@ async def inject_reload(request: Request, call_next):
           headers=headers, media_type=resp.media_type)
   return resp
 
+
+# Terminate the Process Forcefully (When Exit Signal Received)
+def force_exit(sig, frame):
+  os._exit(0)
+
+signal.signal(signal.SIGINT, force_exit)
+signal.signal(signal.SIGTERM, force_exit)

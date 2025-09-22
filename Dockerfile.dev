@@ -4,14 +4,11 @@ FROM biltudas1/mxe:qt-static
 RUN wget https://install.python-poetry.org -O - | python3 -
 ENV PATH="/root/.local/bin:${PATH}"
 
-# Install watchexec
-RUN apt -y update && \
-    apt -y install watchexec-cli && \
-    apt -y autoremove && \
-    apt -y autoclean && \
-    apt -y clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    exit 0
-
 WORKDIR /mnt
-ENTRYPOINT [ "/bin/sh", "debug.sh" ]
+
+# Install Packages
+COPY pyproject.toml .
+COPY poetry.lock .
+RUN poetry install --with dev --no-root
+
+ENTRYPOINT [ "/bin/bash", "debug.sh" ]

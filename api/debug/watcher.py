@@ -2,6 +2,32 @@ import asyncio
 from watchfiles import awatch
 from pathlib import Path
 from .semaphore import AsyncFileSemaphore
+import os
+import logging
+from .colorlog import ColorFormatter
+
+
+# Logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+stream = logging.StreamHandler()
+stream.setFormatter(ColorFormatter("%(levelname)s %(message)s"))
+logger.addHandler(stream)
+
+
+async def run_server():
+  """
+  Run Uvicorn Server
+  """
+  env = os.environ.copy()
+  env.update({"DEBUG": "1"})
+
+  # Start Uvicorn as a subprocess
+  process = await asyncio.create_subprocess_exec(
+    "uvicorn", "api.debug.middleware:app", "--host", "0.0.0.0", "--port", "8000", "--use-colors",
+    env=env
+  )
+  return process
 
 
 async def watch():
@@ -13,12 +39,11 @@ async def watch():
   reload_lock = AsyncFileSemaphore("reload.lock")
 
   while started:
-    # Start Uvicorn as a subprocess
-    process = await asyncio.create_subprocess_exec(
-      "uvicorn", "api.debug.middleware:app"
-    )
+    process = await run_server()
 
-    print("Server started... watching for changes")
+    logger.info("Server started... watching for changes")
+    reload_lock.set() # Telling all the clients to reload
+
     assetsPath = str(Path(str(Path.cwd()) + "/assets").absolute().resolve())
     apiPath = str(Path(str(Path.cwd()) + "/api").absolute().resolve())
 
@@ -34,12 +59,12 @@ async def watch():
           isApiChanged = filePath.startswith(apiPath) or isApiChanged
 
         if isAssetsChanged:
-          print(f"Changes detected, reloading frontend...")
+          logger.info(f"Changes detected, reloading frontend...")
           reload_lock.set()
           continue
 
         if isApiChanged:
-          print(f"Changes detected, restarting server...")
+          logger.info(f"Changes detected, restarting server...")
           process.terminate()
           await process.wait()
           break
@@ -48,5 +73,5 @@ async def watch():
       # If User Pressed Ctrl + C, then Terminate Process
       process.terminate()
       await process.wait()
-      print("Process Stopped")
+      logger.info("Process Stopped")
       started = False

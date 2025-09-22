@@ -1,7 +1,22 @@
 #!/bin/bash
 
-source docker/scripts/build.sh
+# Start Python (Poetry) in the background
+poetry install > /dev/null
+poetry run debug &
+PYTHON_PID=$!
 
-# clean_configuration
-# debug_configure_only RelWithDebInfo
-# clean_build
+# Function to handle termination signals
+function cleanup {
+  echo "Sending Termination Signal to Server..."
+  kill -TERM $PYTHON_PID
+}
+
+# Trap Ctrl+C (SIGINT) and Docker stop (SIGTERM)
+trap cleanup INT TERM
+
+# Wait for the Python process to finish
+wait $PYTHON_PID
+EXIT_CODE=$?
+
+echo "Server exited with code $EXIT_CODE"
+exit $EXIT_CODE
