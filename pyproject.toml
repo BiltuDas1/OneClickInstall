@@ -18,7 +18,7 @@ dependencies = [
 repository = "https://github.com/BiltuDas1/OneClickInstall"
 
 [project.scripts]
-app = "api.auto:reload"
+debug = "api.debug:reload"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

@@ -15,7 +15,7 @@ async def watch():
   while started:
     # Start Uvicorn as a subprocess
     process = await asyncio.create_subprocess_exec(
-      "uvicorn", "api.auto.middleware:app"
+      "uvicorn", "api.debug.middleware:app"
     )
 
     print("Server started... watching for changes")

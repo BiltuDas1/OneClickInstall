@@ -13,6 +13,7 @@ Dockerfile* text eol=lf
 *.css text eol=lf
 *.js text eol=lf
 *.py text eol=lf
+*.sh text eol=lf
 
 # Keep batch scripts CRLF (don’t convert)
 *.bat text eol=crlf
