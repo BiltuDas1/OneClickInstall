@@ -1,4 +1,4 @@
-name: docker-publish
+name: "Docker Build & Publish"
 
 on:
   workflow_dispatch:
@@ -11,6 +11,10 @@ on:
         description: 'Path to Dockerfile to use'
         required: true
         default: 'docker/Dockerfile.mxe-qt6-dynamic'
+      docker_image:
+        description: 'Image:Tag name to publish'
+        required: true
+        default: 'biltudas1/mxe:qt-dynamic'
 
 jobs:
   docker:
@@ -34,4 +38,4 @@ jobs:
         with:
           file: ${{ github.event.inputs.dockerfile_path }}
           push: true
-          tags: biltudas1/mxe:qt-dynamic
+          tags: ${{ github.event.inputs.docker_image }}
