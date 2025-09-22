@@ -90,3 +90,6 @@ dist/
 
 # Docker
 docker-compose.yml
+
+# Lock files
+reload.lock

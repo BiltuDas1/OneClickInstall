@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Compile only the Windows Binary when COMPILE_ONLY flag is set
+if [[ -n "$COMPILE_ONLY" ]]; then
+  cd /mnt
+  poetry run python autobuild.py
+  exit
+fi
+
 # Start Python (Poetry) in the background
 poetry install > /dev/null
 poetry run debug &

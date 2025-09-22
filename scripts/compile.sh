@@ -5,9 +5,9 @@ BUILD_TYPE=Release
 function configure_only {
   if [[ -f "CMakeLists.txt" ]]; then
     if [[ -z "$1" ]]; then
-      cmake -S . -B build -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
+      cmake -S . -B build -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF
     else
-      cmake -S . -B build -DCMAKE_BUILD_TYPE=$1
+      cmake -S . -B build -DCMAKE_BUILD_TYPE=$1 -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF
     fi
   fi
 }
