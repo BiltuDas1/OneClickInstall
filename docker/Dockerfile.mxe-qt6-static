@@ -1,0 +1,19 @@
+# Source: https://github.com/fffaraz/docker-qt/blob/master/Dockerfile.win64s
+
+FROM biltudas1/mxe:gcc
+
+WORKDIR /opt/mxe
+
+# Build Qt6 Static
+RUN make JOBS=$(nproc) qt6-qtbase MXE_TARGETS='x86_64-w64-mingw32.static' -j$(nproc)
+
+# Setting up Environments
+ENV PATH="${PATH}:/opt/mxe/usr/x86_64-w64-mingw32.static/qt6/bin"
+
+RUN \
+    set -eux && \
+    echo $PATH && \
+    ln -s /opt/mxe/usr/bin/x86_64-w64-mingw32.static-cmake /usr/local/bin/cmake && \
+    cmake --version && \
+    qmake --version && \
+    exit 0

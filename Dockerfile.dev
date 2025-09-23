@@ -1,0 +1,28 @@
+FROM biltudas1/mxe:qt-dynamic
+
+# Install Poetry
+RUN wget https://install.python-poetry.org -O - | python3 -
+ENV PATH="/root/.local/bin:${PATH}"
+
+# Install ccache
+RUN \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt -y update && \
+    apt -y upgrade && \
+    apt -y install ccache && \
+    apt -y autoremove && \
+    apt -y autoclean && \
+    apt -y clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    exit 0
+ENV CC="ccache x86_64-w64-mingw32.shared-gcc"
+ENV CXX="ccache x86_64-w64-mingw32.shared-g++"
+
+WORKDIR /mnt
+
+# Install Packages
+COPY pyproject.toml .
+COPY poetry.lock .
+RUN poetry install --with dev --no-root
+
+ENTRYPOINT [ "/bin/bash", "debug.sh" ]

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>scripts/msi.cmd</file>
+        <file>assets/icons/logo.ico</file>
+    </qresource>
+</RCC>

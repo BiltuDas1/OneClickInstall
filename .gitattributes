@@ -1,0 +1,23 @@
+# Convert all source files to use LF
+*.cpp text eol=lf
+*.h   text eol=lf
+*.ui  text eol=lf
+*.qrc text eol=lf
+*.rc  text eol=lf
+*.manifest text eol=lf
+Dockerfile* text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.py text eol=lf
+*.sh text eol=lf
+
+# Keep batch scripts CRLF (don’t convert)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Detects Dockerfile.<suffix> as Dockerfile
+Dockerfile* linguist-language=Dockerfile

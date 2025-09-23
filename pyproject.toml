@@ -1,0 +1,35 @@
+[project]
+name = "oneclickinstall"
+version = "0.0.1"
+description = "Software that allows to install Application Automatically"
+authors = [
+    {name = "Biswajit Das",email = "billionto@gmail.com"}
+]
+license-files = ["LICENSE"]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi (>=0.117.1,<0.118.0)",
+    "uvicorn (>=0.36.0,<0.37.0)",
+    "jinja2 (>=3.1.6,<4.0.0)"
+]
+
+[project.urls]
+repository = "https://github.com/BiltuDas1/OneClickInstall"
+
+[project.scripts]
+debug = "api.debug:reload"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [
+    { include = "api" }
+]
+
+[dependency-groups]
+dev = [
+    "watchfiles (>=1.1.0,<2.0.0)",
+]

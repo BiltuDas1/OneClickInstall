@@ -1,0 +1,20 @@
+# General Files
+.*
+LICENSE
+*.md
+
+# Build
+build/
+dist/
+
+# Python Cache
+__pycache__/
+
+# Git
+.git*
+
+# Docker
+docker-compose.yml
+
+# Lock files
+reload.lock
