@@ -1,4 +1,4 @@
-FROM biltudas1/mxe:qt-dynamic
+FROM biltudas1/mxe:qt-static
 
 # Install Poetry
 RUN wget https://install.python-poetry.org -O - | python3 -
@@ -24,5 +24,11 @@ WORKDIR /mnt
 COPY pyproject.toml .
 COPY poetry.lock .
 RUN poetry install --with dev --no-root
+
+# Building curl libraries (Static)
+WORKDIR /opt/mxe
+RUN make curl MXE_TARGETS='x86_64-w64-mingw32.static' -j$(nproc)
+WORKDIR /mnt
+ENV LINK_STATICALLY=yes
 
 ENTRYPOINT [ "/bin/bash", "debug.sh" ]

@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(CURL REQUIRED)
 
 # Root
 set(SRC_MAIN
@@ -23,19 +24,27 @@ set(SRC_UI
     windows/ui/mainwindow_includes.h
     windows/ui/mainwindow.cpp
     windows/ui/mainwindow.ui
-    windows/ui/buttons/install.cpp
+    windows/ui/buttons/download.cpp
     windows/ui/buttons/browse.cpp
 )
 
 set(SRC_CORE
     windows/core/install.h
     windows/core/install.cpp
+    windows/core/download.h
+    windows/core/download.cpp
+)
+
+set(SRC_UTILS
+    windows/utils/network/network.h
+    windows/utils/network/network.cpp
 )
 
 set(PROJECT_SOURCES
     ${SRC_MAIN}
     ${SRC_UI}
     ${SRC_CORE}
+    ${SRC_UTILS}
 )
 
 if(WIN32)
@@ -67,7 +76,32 @@ else()
     endif()
 endif()
 
-target_link_libraries(OneClickInstall PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(OneClickInstall PRIVATE 
+    Qt${QT_VERSION_MAJOR}::Widgets
+    CURL::libcurl
+    psl
+    idn2
+    ssh2
+    nghttp2
+    ssl
+    crypto
+    zstd
+    z
+    brotlidec
+    brotlicommon
+    unistring
+    iconv
+    ws2_32
+    wldap32
+    crypt32
+    secur32
+    bcrypt
+)
+
+# Static Linking Curl
+if(DEFINED ENV{LINK_STATICALLY})
+    target_compile_definitions(OneClickInstall PRIVATE CURL_STATICLIB)
+endif()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

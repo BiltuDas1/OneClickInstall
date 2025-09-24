@@ -32,43 +32,17 @@
    <property name="enabled">
     <bool>true</bool>
    </property>
-   <widget class="QTextEdit" name="textEdit">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>10</y>
-      <width>351</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>380</x>
-      <y>10</y>
-      <width>80</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Browse</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="installButton">
+   <widget class="QPushButton" name="downloadButton">
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>50</y>
+      <y>10</y>
       <width>80</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>Install</string>
+     <string>Download</string>
     </property>
    </widget>
    <widget class="QLabel" name="progressLabel">

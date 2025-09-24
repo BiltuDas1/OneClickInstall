@@ -93,3 +93,6 @@ docker-compose.yml
 
 # Lock files
 reload.lock
+
+# External Testing files
+demo/

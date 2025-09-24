@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "../core/install.h"
+#include "../core/download.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -18,11 +18,13 @@ class MainWindow : public QMainWindow {
     ~MainWindow();
 
   private slots:
-    void on_pushButton_pressed();
-    void on_installButton_pressed();
+    void on_downloadButton_pressed();
+    void onProgressUpdated(int percentage);
+    void onDownloadFinished(bool success, const QString& message);
+
 
   private:
     Ui::MainWindow *ui;
-    Install::Installer *installer;
+    Downloader::Download* m_downloader;
 };
 #endif // MAINWINDOW_H
