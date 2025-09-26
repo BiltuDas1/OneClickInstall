@@ -24,8 +24,9 @@ set(SRC_UI
     windows/ui/mainwindow_includes.h
     windows/ui/mainwindow.cpp
     windows/ui/mainwindow.ui
-    windows/ui/buttons/download.cpp
-    windows/ui/buttons/browse.cpp
+    windows/ui/actions/download.cpp
+    windows/ui/buttons/cancel.cpp
+    windows/ui/buttons/info.cpp
 )
 
 set(SRC_CORE
@@ -38,6 +39,7 @@ set(SRC_CORE
 set(SRC_UTILS
     windows/utils/network/network.h
     windows/utils/network/network.cpp
+    windows/utils/network/post.cpp
 )
 
 set(PROJECT_SOURCES

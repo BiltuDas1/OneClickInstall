@@ -1,6 +1,7 @@
 #include "network.h"
 #include <cstdio>
 
+
 Network::Network(QObject *parent) : QObject(parent) {
   // Initialize cURL in the constructor.
   curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -17,6 +18,11 @@ Network::~Network() {
 int Network::progress_callback(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t, curl_off_t) {
   // The 'clientp' pointer is our Network instance. We cast it back.
   Network* network_instance = static_cast<Network*>(clientp);
+
+  // Cancel the download when requested
+  if (network_instance->cancelRequested) {
+    return 1;
+  }
   
   if (dltotal > 0) {
     double percentage = static_cast<double>(dlnow) / static_cast<double>(dltotal) * 100.0;
@@ -31,8 +37,15 @@ size_t Network::write_data_callback(void *ptr, size_t size, size_t nmemb, void *
   return fwrite(ptr, size, nmemb, static_cast<FILE*>(stream));
 }
 
+// Cancel download action
+void Network::cancelDownload() {
+  cancelRequested = true;
+}
+
 // This is the main function that runs the download.
 void Network::startDownload(const QString &url, const QString &filename) {
+  cancelRequested = false;
+
   FILE* fp = fopen(filename.toStdString().c_str(), "wb");
   if (!fp) {
     // If the file can't be opened, emit a failure signal and stop.
@@ -61,7 +74,9 @@ void Network::startDownload(const QString &url, const QString &filename) {
   fclose(fp);
 
   // Report the final result via a signal.
-  if (res != CURLE_OK) {
+  if (res == CURLE_ABORTED_BY_CALLBACK) {
+    emit downloadFinished(false, "Download cancelled by user.");
+  } else if (res != CURLE_OK) {
     emit downloadFinished(false, curl_easy_strerror(res));
   } else {
     emit downloadFinished(true, "Download successful.");

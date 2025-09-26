@@ -18,13 +18,14 @@ class MainWindow : public QMainWindow {
     ~MainWindow();
 
   private slots:
-    void on_downloadButton_pressed();
+    void on_cancelButton_pressed();
+    void on_infoButton_pressed();
     void onProgressUpdated(int percentage);
     void onDownloadFinished(bool success, const QString& message);
 
-
   private:
     Ui::MainWindow *ui;
-    Downloader::Download* m_downloader;
+    Downloader::Download* downloader;
+    bool showDetails = false;
 };
 #endif // MAINWINDOW_H
