@@ -14,6 +14,13 @@ MainWindow::MainWindow(QWidget *parent)
   // Start download
   ui->progressLabel->setStyleSheet("QLabel { color : black; }");
   ui->progressLabel->setText("Downloading 100MB.bin...");
+
+  // Insert the current status in table
+  int rowIndex = ui->infoWindow->rowCount();
+  ui->infoWindow->insertRow(rowIndex);
+  ui->infoWindow->setItem(rowIndex, 0, new QTableWidgetItem("100MB.bin"));
+  ui->infoWindow->setItem(rowIndex, 1, new QTableWidgetItem("Downloading..."));
+
   downloader->startFileDownload("https://ash-speed.hetzner.com/100MB.bin", "100MB.bin");
 }
 
