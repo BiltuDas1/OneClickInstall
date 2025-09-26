@@ -1,1 +1,1 @@
-FROM biltudas1/mxe:qt-static
+FROM biltudas1/qt:static
