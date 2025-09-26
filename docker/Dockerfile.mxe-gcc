@@ -1,6 +1,0 @@
-FROM biltudas1/mxe:latest
-
-WORKDIR /opt/mxe
-
-# Build GCC toolchain
-RUN make gcc MXE_TARGETS='x86_64-w64-mingw32.static' -j$(nproc)
