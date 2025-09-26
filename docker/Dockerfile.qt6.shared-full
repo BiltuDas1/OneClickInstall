@@ -1,0 +1,4 @@
+FROM biltudas1/qt:shared
+
+# Adding qt6-qtsvg & curl
+RUN make JOBS=$(nproc) qt6-qtsvg curl MXE_TARGETS='x86_64-w64-mingw32.shared' -j$(nproc)

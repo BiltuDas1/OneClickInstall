@@ -1,4 +1,4 @@
-FROM biltudas1/mxe:qt-dynamic
+FROM biltudas1/qt:shared
 
 # Install Poetry
 RUN wget https://install.python-poetry.org -O - | python3 -
