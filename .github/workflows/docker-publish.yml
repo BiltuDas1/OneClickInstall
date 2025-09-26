@@ -10,11 +10,11 @@ on:
       dockerfile_path:
         description: 'Path to Dockerfile to use'
         required: true
-        default: 'docker/Dockerfile.mxe-qt6-dynamic'
+        default: 'docker/Dockerfile.mxe-qt6-static'
       docker_image:
         description: 'Image:Tag name to publish'
         required: true
-        default: 'biltudas1/mxe:qt-dynamic'
+        default: 'mxe:qt-static'
 
 jobs:
   docker:
@@ -38,4 +38,4 @@ jobs:
         with:
           file: ${{ github.event.inputs.dockerfile_path }}
           push: true
-          tags: ${{ github.event.inputs.docker_image }}
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.inputs.docker_image }}
