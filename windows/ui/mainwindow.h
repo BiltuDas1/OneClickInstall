@@ -3,6 +3,7 @@
 
 #include "../core/download.h"
 #include <QMainWindow>
+#include "../utils/metadata.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,12 +21,14 @@ class MainWindow : public QMainWindow {
   private slots:
     void on_cancelButton_pressed();
     void on_infoButton_pressed();
+    void on_sourceButton_clicked();
     void onProgressUpdated(int percentage);
     void onDownloadFinished(bool success, const QString& message);
 
   private:
     Ui::MainWindow *ui;
     Downloader::Download* downloader;
+    MetaData *metadatas;
     bool showDetails = false;
 };
 #endif // MAINWINDOW_H

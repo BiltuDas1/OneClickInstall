@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+  metadatas = new MetaData();
   downloader = new Downloader::Download(this);
 
   // Connect signals from the Download class to this window's slots
@@ -25,5 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow() {
+  delete metadatas;
   delete ui;
 }

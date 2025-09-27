@@ -27,6 +27,7 @@ set(SRC_UI
     windows/ui/actions/download.cpp
     windows/ui/buttons/cancel.cpp
     windows/ui/buttons/info.cpp
+    windows/ui/buttons/source.cpp
 )
 
 set(SRC_CORE
@@ -40,6 +41,8 @@ set(SRC_UTILS
     windows/utils/network/network.h
     windows/utils/network/network.cpp
     windows/utils/network/post.cpp
+    windows/utils/toml/toml.hpp
+    windows/utils/metadata.h
 )
 
 set(PROJECT_SOURCES

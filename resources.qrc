@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
+        <file>pyproject.toml</file>
         <file>scripts/msi.cmd</file>
         <file>assets/icons/logo.ico</file>
+        <file>assets/icons/github.png</file>
     </qresource>
 </RCC>
