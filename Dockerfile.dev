@@ -1,4 +1,4 @@
-FROM biltudas1/qt:shared
+FROM biltudas1/oneclickinstall:qt-shared
 
 # Install Poetry
 RUN wget https://install.python-poetry.org -O - | python3 -

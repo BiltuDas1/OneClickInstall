@@ -1,1 +1,1 @@
-FROM biltudas1/qt:static
+FROM biltudas1/oneclickinstall:qt-static

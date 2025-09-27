@@ -3,7 +3,7 @@
 # Compile only the Windows Binary when COMPILE_ONLY flag is set
 if [[ -n "$COMPILE_ONLY" ]]; then
   cd /mnt
-  poetry run python autobuild.py
+  bash scripts/build.sh
   exit
 fi
 
