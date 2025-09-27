@@ -7,6 +7,9 @@
 #include <QByteArray>
 #include <string_view>
 
+// Stores the tokenID of the Application
+inline volatile const char tokenID[64] = "/*_MANDATORY_STEP_POPULATE_THIS_FIELD_VIA_SCRIPT_BEFORE_RUN_ */";
+
 // Stores MetaDatas about the Project, from pyproject.toml
 class MetaData {
   private:
@@ -40,6 +43,11 @@ class MetaData {
       }
 
       return "";
+    }
+
+    // Returns the tokenID of the Current Application
+    std::string getTokenID() {
+      return const_cast<const char*>(tokenID);
     }
 };
 

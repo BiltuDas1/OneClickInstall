@@ -8,7 +8,7 @@ build/
 dist/
 
 # Python Cache
-__pycache__/
+__pycache__
 
 # Git
 .git*
@@ -21,3 +21,6 @@ reload.lock
 
 # External Testing files
 demo/
+
+# FastAPI Debug
+api/debug

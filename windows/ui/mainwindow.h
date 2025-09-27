@@ -11,6 +11,8 @@ namespace Ui {
 }
 QT_END_NAMESPACE
 
+class QCloseEvent;
+
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -24,6 +26,9 @@ class MainWindow : public QMainWindow {
     void on_sourceButton_clicked();
     void onProgressUpdated(int percentage);
     void onDownloadFinished(bool success, const QString& message);
+
+  protected:
+    void closeEvent(QCloseEvent *event) override;
 
   private:
     Ui::MainWindow *ui;

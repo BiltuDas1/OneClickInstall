@@ -3,6 +3,18 @@
 # Compile only the Windows Binary when COMPILE_ONLY flag is set
 if [[ -n "$COMPILE_ONLY" ]]; then
   cd /mnt
+
+  # If RELEASE_BUILD_ONLY is set then build only Release version
+  if [[ -n "$RELEASE_BUILD_ONLY" ]]; then
+    source scripts/compile.sh
+
+    clean_configuration
+    configure_only
+    build_only
+
+    exit
+  fi
+
   bash scripts/build.sh
   exit
 fi

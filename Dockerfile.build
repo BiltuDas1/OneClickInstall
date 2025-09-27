@@ -1,1 +1,41 @@
-FROM biltudas1/oneclickinstall:qt-static
+FROM biltudas1/oneclickinstall:qt-static AS builder
+
+WORKDIR /mnt
+COPY . .
+
+# Build Windows Application
+ENV COMPILE_ONLY=yes
+ENV RELEASE_BUILD_ONLY=yes
+RUN bash debug.sh
+
+# Install Poetry
+RUN wget https://install.python-poetry.org -O - | python3 -
+ENV PATH="/root/.local/bin:${PATH}"
+
+# Extracting requirements.txt
+RUN poetry self add poetry-plugin-export
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+
+
+# Base Image
+FROM python:3.13.7-slim AS base
+
+WORKDIR /app
+
+# Copying files from builder
+COPY --from=builder /mnt/requirements.txt .
+COPY --from=builder /mnt/build/OneClickInstall.exe .
+
+# Installing Packages
+RUN pip install -r requirements.txt
+
+# Copying Source Codes
+COPY api/ ./api/
+COPY assets/ ./assets/
+
+# Setting Environment
+ENV DOCKER=true
+EXPOSE 8000
+
+ENTRYPOINT [ "uvicorn", "api.server:app", "--host", "0.0.0.0", "--port", "8000", "--use-colors" ]
