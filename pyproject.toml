@@ -33,3 +33,12 @@ packages = [
 dev = [
     "watchfiles (>=1.1.0,<2.0.0)",
 ]
+
+[tool.oneclickinstall.api]
+base_url = "http://127.0.0.1:8000"
+api_version = 1
+endpoints = [
+    { listApps = "/fetch" },
+    { getDownloadLinks = "/getFiles" },
+    { scripts = "/script" }
+]

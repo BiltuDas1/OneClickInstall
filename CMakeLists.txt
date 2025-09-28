@@ -42,6 +42,7 @@ set(SRC_UTILS
     windows/utils/network/network.cpp
     windows/utils/network/post.cpp
     windows/utils/toml/toml.hpp
+    windows/utils/json/single_include/nlohmann/json.hpp
     windows/utils/metadata.h
 )
 
