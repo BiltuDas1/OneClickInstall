@@ -1,52 +1,129 @@
 #include "download.h"
+#include <QJsonObject>
+#include <QJsonArray>
 
-using namespace Downloader;
 
-Download::Download(QObject *parent) : QObject(parent) {
-  // Create the thread and the worker object
-  workerThread = new QThread(this);
-  networkWorker = new Network();
-
-  // Move the worker to the background thread
-  networkWorker->moveToThread(workerThread);
-
-  // Connect signals and slots to orchestrate everything
-  connect(this, &Download::executeDownload, networkWorker, &Network::startDownload);
-  connect(networkWorker, &Network::progressUpdated, this, &Download::onNetworkProgress);
-  connect(networkWorker, &Network::downloadFinished, this, &Download::onNetworkFinished);
-  connect(workerThread, &QThread::finished, networkWorker, &QObject::deleteLater);
-
-  // Start the thread's event loop.
-  workerThread->start();
+// Initialize Download Object
+Downloader::Download::Download(QObject *parent) {
+  downloader = new QueuedDownloader(parent);
 }
 
-Download::~Download() {
-  // Cleanly shut down the thread.
-  workerThread->quit();
-  workerThread->wait();
+// Destructor
+Downloader::Download::~Download() {
+  delete downloader;
 }
 
-// This is the public function your UI will call.
-void Download::startFileDownload(const QString& url, const QString& savePath) {
-  // This call is non-blocking. It just sends a message to the worker
-  // thread and returns immediately, keeping your UI responsive.
-  emit executeDownload(url, savePath);
+// Cancel the download
+void Downloader::Download::cancelDownload() {
+  this->downloader->cancelAll();
 }
 
-// This slot receives the raw progress from the Network worker.
-void Download::onNetworkProgress(double percentage) {
-  // We can do logic here if needed, then forward the signal to the UI.
-  emit progressUpdated(static_cast<int>(percentage));
+// Starts the download
+void Downloader::Download::startDownload(const QJsonObject& appObject, const QDir tempPath) {
+  QString errMessage =  "Server send an invalid response, contact the server administrator";
+
+  // If Object format is not right
+  bool nameJson = appObject.contains("name") & appObject["name"].isString();
+  bool mainJson = appObject.contains("main") & appObject["main"].isString();
+  bool executablesJson = appObject.contains("executables") & appObject["executables"].isArray();
+  bool scriptsJson = appObject.contains("scripts") & appObject["scripts"].isArray();
+  if (!(nameJson && mainJson && executablesJson && scriptsJson)) {
+    emit error("Error", errMessage);
+    return;
+  }
+
+  // Set MainScript
+  this->mainScript = tempPath.filePath(appObject["main"].toString());
+
+  // Adding Scripts to download Queue
+  QJsonArray scripts = appObject["scripts"].toArray();
+  qint128 totalScriptSize = 0;
+
+  for (const auto& script : scripts) {
+    if (!script.isObject()) {
+      emit error("Error", errMessage);
+      return;
+    }
+
+    QJsonObject scriptObject = script.toObject();
+
+    // If Object Format is not right
+    bool filenameJson = scriptObject.contains("filename") & scriptObject["filename"].isString();
+    bool urlJson = scriptObject.contains("url") & scriptObject["url"].isString();
+    bool sizeJson = scriptObject.contains("size") & scriptObject["size"].isDouble();
+    if (!(filenameJson && urlJson && sizeJson)) {
+      emit error("Error", errMessage);
+      return;
+    }
+
+    totalScriptSize += scriptObject["size"].toDouble();
+    QString url = scriptObject["url"].toString();
+    QString filepath = tempPath.filePath(scriptObject["filename"].toString());
+
+    this->downloader->addToQueue(url, filepath);
+  }
+
+  // Adding Executables to download Queue
+  QJsonArray executables = appObject["executables"].toArray();
+  qint128 totalExecutableSize = 0;
+
+  for (const auto& executable : executables) {
+    if (!executable.isObject()) {
+      emit error("Error", errMessage);
+      return;
+    }
+
+    QJsonObject executableObject = executable.toObject();
+
+    // If Object Format is not right
+    bool filenameJson = executableObject.contains("filename") & executableObject["filename"].isString();
+    bool urlJson = executableObject.contains("url") & executableObject["url"].isString();
+    bool sizeJson = executableObject.contains("size") & executableObject["size"].isDouble();
+    if (!(filenameJson && urlJson && sizeJson)) {
+      emit error("Error", errMessage);
+      return;
+    }
+
+    totalExecutableSize += executableObject["size"].toDouble();
+    QString url = executableObject["url"].toString();
+    QString filepath = tempPath.filePath(executableObject["filename"].toString());
+
+    this->downloader->addToQueue(url, filepath);
+  }
+
+  // Total downloadable data
+  this->totalAppSize = totalScriptSize + totalExecutableSize;
+
+  // Start downloading
+  connect(downloader, &QueuedDownloader::currentFileProgress, this, &Downloader::Download::onProgress);
+  connect(downloader, &QueuedDownloader::fileFinished, this, &Downloader::Download::onEachComplete);
+  connect(downloader, &QueuedDownloader::queueFinished, this, &Downloader::Download::onDownloadComplete);
+  this->downloader->startQueue();
+
 }
 
-// This slot receives the final result from the Network worker.
-void Download::onNetworkFinished(bool success, const QString& message) {
-  // We can do business logic here (e.g., log to a file),
-  // then forward the result to the UI.
-  emit downloadFinished(success, message);
+// Handle Progress while downloading
+void Downloader::Download::onProgress(qint64 bytesReceived, qint64 bytesTotal) {
+  this->currentDownloaded = bytesReceived;
+  qint128 totalDownloaded = this->downloadedAppSize + this->currentDownloaded;
+  int percentage = (static_cast<double>(totalDownloaded) / this->totalAppSize) * 100.0;
+  emit progress(percentage);
 }
 
-// This slot cancels the download
-void Download::cancelDownload() {
-  networkWorker->cancelDownload();
+// Handle each file completion
+void Downloader::Download::onEachComplete(const QString& url, bool success, const QString& message) {
+  // If download failed
+  if (!success) {
+    downloader->cancelAll();
+    emit error("Error", message);
+    return;
+  }
+
+  this->downloadedAppSize += this->currentDownloaded;
+  this->currentDownloaded = 0;
+}
+
+// Download Complete
+void Downloader::Download::onDownloadComplete() {
+  emit downloadComplete(this->mainScript);
 }

@@ -1,42 +1,38 @@
 #ifndef DOWNLOAD_H
 #define DOWNLOAD_H
 
-#include <QObject>
 #include <QString>
-#include <QThread>
-#include "../utils/network/network.h" // Your thread-safe Network class
+#include <QObject>
+#include <QDir>
+#include "queueddownloader.h"
 
 
 namespace Downloader {
   class Download : public QObject {
-    Q_OBJECT // This macro is essential for signals and slots
+    Q_OBJECT
 
-  public:
-    explicit Download(QObject *parent = nullptr);
-    ~Download();
+    public:
+      Download(QObject *parent = (QObject *)nullptr);
+      void startDownload(const QJsonObject& appObject, const QDir tempPath);
+      void cancelDownload();
+      ~Download();
 
-  public slots:
-    // The UI will call this single function to start a download.
-    void startFileDownload(const QString& url, const QString& savePath);
-    void cancelDownload();
+    signals:
+      void error(QString title, QString message);
+      void progress(int percentage);
+      void downloadComplete(QString main);
 
-  signals:
-    // These signals are for the UI (MainWindow) to connect to.
-    void progressUpdated(int percentage);
-    void downloadFinished(bool success, const QString& message);
+    public slots:
+      void onProgress(qint64 bytesReceived, qint64 bytesTotal);
+      void onEachComplete(const QString& url, bool success, const QString& message);
+      void onDownloadComplete();
 
-  private slots:
-    // These slots handle the signals coming back from the Network worker.
-    void onNetworkProgress(double percentage);
-    void onNetworkFinished(bool success, const QString& message);
-
-  private:
-    Network* networkWorker;
-    QThread* workerThread;
-
-  signals:
-    // Internal signal used to safely trigger the download on the worker thread.
-    void executeDownload(const QString &url, const QString &filename);
+    private:
+      qint128 totalAppSize = 0; // Stores the size of downloadable apps
+      qint128 downloadedAppSize = 0; // Stores the size already downloaded data
+      qint128 currentDownloaded = 0; // Stores the size of current downloaded data
+      QueuedDownloader* downloader;
+      QString mainScript;
   };
 }
 

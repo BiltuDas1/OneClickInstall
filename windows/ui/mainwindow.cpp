@@ -1,31 +1,24 @@
 #include "mainwindow_includes.h"
-#include "../core/install.h"
+#include "../core/run.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
   metadatas = new MetaData();
+  tempDir = nullptr;
   downloader = new Downloader::Download(this);
+  client = new ApiClient(this);
 
-  // Connect signals from the Download class to this window's slots
-  connect(downloader, &Downloader::Download::progressUpdated, this, &MainWindow::onProgressUpdated);
-  connect(downloader, &Downloader::Download::downloadFinished, this, &MainWindow::onDownloadFinished);
-
-  // Start download
-  ui->progressLabel->setStyleSheet("QLabel { color : black; }");
-  ui->progressLabel->setText("Downloading 100MB.bin...");
-
-  // Insert the current status in table
-  int rowIndex = ui->infoWindow->rowCount();
-  ui->infoWindow->insertRow(rowIndex);
-  ui->infoWindow->setItem(rowIndex, 0, new QTableWidgetItem("100MB.bin"));
-  ui->infoWindow->setItem(rowIndex, 1, new QTableWidgetItem("Downloading..."));
-
-  downloader->startFileDownload("https://ash-speed.hetzner.com/100MB.bin", "100MB.bin");
+  // Start the Process
+  this->start();
 }
 
 MainWindow::~MainWindow() {
+  delete downloader;
+  delete client;
+  delete tempDir;
   delete metadatas;
   delete ui;
 }

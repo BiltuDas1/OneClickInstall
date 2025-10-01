@@ -1,4 +1,4 @@
 FROM biltudas1/qt:static
 
 # Adding qt6-qtsvg & curl
-RUN make JOBS=$(nproc) qt6-qtsvg curl MXE_TARGETS='x86_64-w64-mingw32.static' -j$(nproc)
+RUN make JOBS=$(nproc) qt6-qtsvg MXE_TARGETS='x86_64-w64-mingw32.static' -j$(nproc)

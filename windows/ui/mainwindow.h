@@ -1,9 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "../core/download.h"
 #include <QMainWindow>
+#include <QJsonArray>
+#include <QTemporaryDir>
+#include "../core/download.h"
 #include "../utils/metadata.h"
+#include "../core/apiclient.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,14 +30,30 @@ class MainWindow : public QMainWindow {
     void on_sourceButton_clicked();
     void onProgressUpdated(int percentage);
     void onDownloadFinished(bool success, const QString& message);
-
+    void forceQuit();
+    void onFetchedApps(QNetworkReply *reply);
+    void startDownloading();
+    void updateProgressBar(int percentage);
+    void installApp(QString main);
+    void downloadNextApp();
+    void errorBox(QString title, QString message);
+    
   protected:
     void closeEvent(QCloseEvent *event) override;
-
+    
   private:
     Ui::MainWindow *ui;
     Downloader::Download* downloader;
     MetaData *metadatas;
+    ApiClient *client;
     bool showDetails = false;
+    bool forceExit = false;
+    int previousProgress = 0;
+    QTemporaryDir *tempDir;
+    QJsonArray apps;
+    
+    void start();
+    void fetchApps();
+    void downloadBinaries();
 };
 #endif // MAINWINDOW_H

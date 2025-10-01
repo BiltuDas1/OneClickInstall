@@ -8,26 +8,27 @@
 #include <string_view>
 #include <map>
 
+#define placeholderText "/*_MANDATORY_STEP_POPULATE_THIS_FIELD_VIA_SCRIPT_BEFORE_RUN_ */"
+
 // Stores the tokenID of the Application
-inline volatile const char tokenID[64] = "/*_MANDATORY_STEP_POPULATE_THIS_FIELD_VIA_SCRIPT_BEFORE_RUN_ */";
+inline volatile const char tokenID[64] = placeholderText;
 
 // Stores MetaDatas about the Project, from pyproject.toml
 class MetaData {
   private:
     toml::table metadatas;
     std::string baseUrl;
-    std::string apiVersion;
+    int apiVersion;
+    std::string apiVersionStr;
     std::string repositoryUrl;
     std::map<std::string, std::string> endpoints;
 
     // Loads the api settings
     void loadAPISettings() {
-      auto tool = metadatas["tool"].as_table();
-      auto oneclickinstall = (*tool)["oneclickinstall"].as_table();
-      auto api = (*oneclickinstall)["api"].as_table();
-      auto endpointsArr = (*api)["endpoints"].as_array();
+      auto api = metadatas["tool"]["oneclickinstall"]["api"];
+      auto endpointsList = api["endpoints"].as_table();
 
-      if ((!tool) || (!oneclickinstall) || (!api) || (!endpointsArr)) {
+      if ((!api) || (!endpointsList)) {
         throw std::runtime_error("Missing [tool.oneclickinstall.api.endpoints]");
       }
 
@@ -39,24 +40,16 @@ class MetaData {
       }
 
       // Loading base_url
-      this->baseUrl = (*api)["base_url"].value_or<std::string>("");
+      this->baseUrl = api["base_url"].value_or<std::string>("");
 
       // Loading api_version
-      int version = (*api)["api_version"].value_or<int>(1);
-      this->apiVersion = "v" + std::to_string(version);
+      this->apiVersion = api["api_version"].value_or<int>(1);
+      this->apiVersionStr = "v" + std::to_string(this->apiVersion);
 
       // Loading Endpoints
-      for (auto&& ep : *endpointsArr) {
-        auto tbl = ep.as_table();
-
-        if (!tbl) {
-          continue;
-        }
-
-        for (auto&& [key, val] : *tbl) {
-          if (auto v = val.value<std::string>()) {
-            this->endpoints.emplace(key.str(), *v);
-          }
+      for (auto&& [key, val] : *endpointsList) {
+        if (auto v = val.value<std::string>()) {
+          this->endpoints.emplace(key.str(), *v);
         }
       }
 
@@ -90,7 +83,11 @@ class MetaData {
 
     // Returns the tokenID of the Current Application
     std::string getTokenID() const {
-      return const_cast<const char*>(tokenID);
+      std::string token = const_cast<const char*>(tokenID);
+      if (token == placeholderText) {
+        return "";
+      }
+      return token;
     }
 
     // Returns the base url
@@ -100,20 +97,17 @@ class MetaData {
 
     // Returns the api Version
     int getApiVersion() const {
-      if (apiVersion.size() > 1 && apiVersion[0] == 'v') {
-        return std::stoi(apiVersion.substr(1));
-      }
-      return 0;
+      return this->apiVersion;
     }
 
     // Returns the endpoint where the apps list will come
     std::string getAppsEndpoint() {
-      return this->baseUrl + "/" + this->apiVersion + this->endpoints["listApps"];
+      return this->baseUrl + this->endpoints["listApps"];
     }
 
     // Returns the endpoint where the scripts and executable of the application will resides
     std::string getDownloadLinksEndpoint() {
-      return this->baseUrl + "/" + this->apiVersion + this->endpoints["getDownloadLinks"];
+      return this->baseUrl + this->endpoints["getDownloadLinks"];
     }
 };
 

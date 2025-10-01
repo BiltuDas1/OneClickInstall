@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from .routes import download
+from .routes import download, app_v1
 
 
 app = FastAPI()
@@ -17,5 +17,7 @@ templates = Jinja2Templates(directory="assets/")
 async def home(request: Request):
   return templates.TemplateResponse("index.html", {"request": request, "title": "Homepage"})
 
-# Download functions
+
+# Routes
 download.createDownloadRouter(app)
+app_v1.createAppsAPI(app)

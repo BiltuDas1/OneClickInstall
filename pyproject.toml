@@ -37,8 +37,8 @@ dev = [
 [tool.oneclickinstall.api]
 base_url = "http://127.0.0.1:8000"
 api_version = 1
-endpoints = [
-    { listApps = "/fetch" },
-    { getDownloadLinks = "/getFiles" },
-    { scripts = "/script" }
-]
+
+[tool.oneclickinstall.api.endpoints]
+listApps = "/v1/fetch"
+getDownloadLinks = "/v1/getFiles"
+scripts = "/v1/script"

@@ -90,8 +90,11 @@
       <height>31</height>
      </size>
     </property>
-    <property name="value">
+    <property name="maximum">
      <number>0</number>
+    </property>
+    <property name="value">
+     <number>-1</number>
     </property>
     <property name="textVisible">
      <bool>false</bool>
