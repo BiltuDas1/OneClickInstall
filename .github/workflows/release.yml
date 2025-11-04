@@ -1,0 +1,59 @@
+name: Release and Publish Docker Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "version.txt"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+      is_prerelease: ${{ steps.version.outputs.IS_PRERELEASE }}
+      skip: ${{ steps.check_release.outputs.skip }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+
+      - name: Make scripts executable
+        run: chmod +x .github/scripts/*.sh
+
+      - name: Read version and check for pre-release
+        id: version
+        run: ./.github/scripts/get-version.sh
+
+      - name: Check for existing release
+        id: check_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.VERSION }}
+        run: ./.github/scripts/check-release.sh
+
+  build_docker:
+    needs: check
+    if: needs.check.outputs.skip == 'false'
+    uses: ./.github/workflows/build-docker.yml
+    with:
+      version: ${{ needs.check.outputs.version }}
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}
+
+  create_release:
+    needs: [check, build_docker]
+    if: needs.check.outputs.skip == 'false'
+    uses: ./.github/workflows/create-release.yml
+    with:
+      version: ${{ needs.check.outputs.version }}
+      is_prerelease: ${{ needs.check.outputs.is_prerelease }}
+    secrets:
+      gh_token: ${{ secrets.GITHUB_TOKEN }}

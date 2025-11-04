@@ -1,0 +1,37 @@
+on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+      is_prerelease:
+        type: string
+        required: true
+    secrets:
+      gh_token:
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: "recursive"
+
+      - name: Make scripts executable
+        run: chmod +x .github/scripts/*.sh
+
+      - name: Generate changelog body
+        run: ./.github/scripts/generate-changelog.sh
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.gh_token }}
+          VERSION: ${{ inputs.version }}
+          IS_PRERELEASE: ${{ inputs.is_prerelease }}
+        run: ./.github/scripts/create-release.sh

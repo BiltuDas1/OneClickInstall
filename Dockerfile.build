@@ -38,4 +38,8 @@ COPY assets/ ./assets/
 ENV DOCKER=true
 EXPOSE 8000
 
+LABEL maintainer="Biswajit Das <billionto@gmail.com>"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.source=https://github.com/BiltuDas1/OneClickInstall
+
 ENTRYPOINT [ "uvicorn", "api.server:app", "--host", "0.0.0.0", "--port", "8000", "--use-colors" ]
