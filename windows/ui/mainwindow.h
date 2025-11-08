@@ -36,6 +36,7 @@ class MainWindow : public QMainWindow {
     void updateProgressBar(int percentage);
     void installApp(QString main);
     void downloadNextApp();
+    void downloadApp();
     void errorBox(QString title, QString message);
     
   protected:

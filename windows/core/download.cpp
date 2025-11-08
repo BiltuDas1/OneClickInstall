@@ -5,7 +5,11 @@
 
 // Initialize Download Object
 Downloader::Download::Download(QObject *parent) {
+  // Connect signals once in the constructor to avoid multiple connections
   downloader = new QueuedDownloader(parent);
+  connect(downloader, &QueuedDownloader::currentFileProgress, this, &Downloader::Download::onProgress);
+  connect(downloader, &QueuedDownloader::fileFinished, this, &Downloader::Download::onEachComplete);
+  connect(downloader, &QueuedDownloader::queueFinished, this, &Downloader::Download::onDownloadComplete);
 }
 
 // Destructor
@@ -95,18 +99,19 @@ void Downloader::Download::startDownload(const QJsonObject& appObject, const QDi
   this->totalAppSize = totalScriptSize + totalExecutableSize;
 
   // Start downloading
-  connect(downloader, &QueuedDownloader::currentFileProgress, this, &Downloader::Download::onProgress);
-  connect(downloader, &QueuedDownloader::fileFinished, this, &Downloader::Download::onEachComplete);
-  connect(downloader, &QueuedDownloader::queueFinished, this, &Downloader::Download::onDownloadComplete);
   this->downloader->startQueue();
 
 }
 
 // Handle Progress while downloading
 void Downloader::Download::onProgress(qint64 bytesReceived, qint64 bytesTotal) {
+  this->currentFileSize = bytesTotal;
   this->currentDownloaded = bytesReceived;
   qint128 totalDownloaded = this->downloadedAppSize + this->currentDownloaded;
-  int percentage = (static_cast<double>(totalDownloaded) / this->totalAppSize) * 100.0;
+  int percentage = 0;
+  if (this->totalAppSize > 0) {
+    percentage = (static_cast<double>(totalDownloaded) / this->totalAppSize) * 100.0;
+  }
   emit progress(percentage);
 }
 
@@ -119,7 +124,7 @@ void Downloader::Download::onEachComplete(const QString& url, bool success, cons
     return;
   }
 
-  this->downloadedAppSize += this->currentDownloaded;
+  this->downloadedAppSize += this->currentFileSize;
   this->currentDownloaded = 0;
 }
 

@@ -34,39 +34,32 @@ void QueuedDownloader::cancelAll() {
 
 void QueuedDownloader::processNextInQueue() {
   if (m_downloadQueue.isEmpty()) {
-    if(m_isBusy) { // This means the last active job just finished
-      m_isBusy = false;
-      emit queueFinished();
-    }
-    return; // Nothing to do.
+    m_isBusy = false;
+    emit queueFinished();
+    return;
   }
 
   m_isBusy = true;
   DownloadJob job = m_downloadQueue.dequeue();
 
-  m_outputFile = new QFile(job.savePath, this);
+  m_outputFile = new QFile(job.savePath);
   if (!m_outputFile->open(QIODevice::WriteOnly)) {
     emit fileFinished(job.url, false, "Error: Could not open file for writing.");
     delete m_outputFile;
     m_outputFile = nullptr;
-    m_isBusy = false;
     // Automatically try to process the next item in the queue
     processNextInQueue();
     return;
   }
+  m_outputFile->setParent(this);
 
   QNetworkRequest request(QUrl(job.url));
   m_currentReply = m_manager->get(request);
 
   // Connect signals for the new reply
+  connect(m_currentReply, &QNetworkReply::downloadProgress, this, &QueuedDownloader::currentFileProgress);
   connect(m_currentReply, &QNetworkReply::readyRead, this, &QueuedDownloader::onReadyRead);
-  connect(m_currentReply, &QNetworkReply::downloadProgress, this, &QueuedDownloader::onDownloadProgress);
   connect(m_currentReply, &QNetworkReply::finished, this, &QueuedDownloader::onFinished);
-}
-
-void QueuedDownloader::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal) {
-  // Directly emit the byte counts as requested
-  emit currentFileProgress(bytesReceived, bytesTotal);
 }
 
 void QueuedDownloader::onReadyRead() {
@@ -96,7 +89,6 @@ void QueuedDownloader::onFinished() {
 
   m_currentReply->deleteLater();
   m_currentReply = nullptr;
-  m_isBusy = false;
 
   // This is the key: after finishing one job, immediately start the next.
   processNextInQueue();
