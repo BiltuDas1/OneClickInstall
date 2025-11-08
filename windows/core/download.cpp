@@ -24,6 +24,11 @@ void Downloader::Download::cancelDownload() {
 
 // Starts the download
 void Downloader::Download::startDownload(const QJsonObject& appObject, const QDir tempPath) {
+  // Reset download progress trackers for the new app
+  this->downloadedAppSize = 0;
+  this->currentDownloaded = 0;
+  this->totalAppSize = 0;
+
   QString errMessage =  "Server send an invalid response, contact the server administrator";
 
   // If Object format is not right
@@ -105,7 +110,6 @@ void Downloader::Download::startDownload(const QJsonObject& appObject, const QDi
 
 // Handle Progress while downloading
 void Downloader::Download::onProgress(qint64 bytesReceived, qint64 bytesTotal) {
-  this->currentFileSize = bytesTotal;
   this->currentDownloaded = bytesReceived;
   qint128 totalDownloaded = this->downloadedAppSize + this->currentDownloaded;
   int percentage = 0;
@@ -113,6 +117,12 @@ void Downloader::Download::onProgress(qint64 bytesReceived, qint64 bytesTotal) {
     percentage = (static_cast<double>(totalDownloaded) / this->totalAppSize) * 100.0;
   }
   emit progress(percentage);
+
+  // When a file is fully downloaded, its size is added to the total downloaded size.
+  if (bytesReceived > 0 && bytesReceived == bytesTotal) {
+    this->downloadedAppSize += bytesReceived;
+    this->currentDownloaded = 0;
+  }
 }
 
 // Handle each file completion
@@ -123,9 +133,6 @@ void Downloader::Download::onEachComplete(const QString& url, bool success, cons
     emit error("Error", message);
     return;
   }
-
-  this->downloadedAppSize += this->currentFileSize;
-  this->currentDownloaded = 0;
 }
 
 // Download Complete
