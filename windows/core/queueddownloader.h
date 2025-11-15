@@ -46,7 +46,6 @@ class QueuedDownloader : public QObject {
 
     // Private slots to handle signals from the active QNetworkReply.
     void onReadyRead();
-    void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
     void onFinished();
 
   private:

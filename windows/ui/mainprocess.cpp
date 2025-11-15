@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDir>
+#include <memory>
 #include "../core/run.h"
 
 
@@ -122,7 +123,7 @@ void MainWindow::downloadBinaries() {
   connect(downloader, &Downloader::Download::downloadComplete, this, &MainWindow::installApp);
   connect(downloader, &Downloader::Download::error, this, &MainWindow::errorBox);
 
-  this->downloadNextApp();
+  this->downloadApp();
 }
 
 // Update the Progress bar and Detailed info
@@ -140,21 +141,36 @@ void MainWindow::updateProgressBar(int percentage) {
 void MainWindow::installApp(QString main) {
   this->previousProgress += 100;
 
-  Run::Run *exe = new Run::Run(main, this->tempDir->path());
-  exe->Execute(this, [this, exe](){
+  // Update the current status in the Table
+  int rowIndex = ui->infoWindow->rowCount() - 1;
+  ui->infoWindow->setItem(rowIndex, 1, new QTableWidgetItem("Installing..."));
+  QString app = ui->progressLabel->text();
+  ui->progressLabel->setText(app.replace("Downloading", "Installing"));
+
+  std::unique_ptr<Run::Run> exe = std::make_unique<Run::Run>(main, this->tempDir->path());
+  exe->Execute(this, [this](){
     // Update the Progress Bar
     this->previousProgress += 10;
     this->ui->progressBar->setValue(previousProgress);
+    int rowIndex = ui->infoWindow->rowCount() - 1;
+    this->ui->infoWindow->setItem(rowIndex, 1, new QTableWidgetItem("Complete"));
 
-    MainWindow::downloadNextApp();
-    delete exe;
+    MainWindow::downloadApp();
   });
+}
+
+// Download the app (slot)
+void MainWindow::downloadApp() {
+  emit downloadNextApp();
 }
 
 // Downloads the app
 void MainWindow::downloadNextApp() {
   // If the list is empty, then stop
   if (this->apps.size() == 0) {
+    ui->progressLabel->setText("Operation Complete");
+    ui->cancelButton->setText("Close");
+    this->forceExit = true;
     return;
   }
 
@@ -184,6 +200,7 @@ void MainWindow::downloadNextApp() {
   ui->infoWindow->insertRow(rowIndex);
   ui->infoWindow->setItem(rowIndex, 0, new QTableWidgetItem(app["name"].toString()));
   ui->infoWindow->setItem(rowIndex, 1, new QTableWidgetItem("Downloading..."));
+  ui->progressLabel->setText(QString("Downloading %1...").arg(app["name"].toString()));
 
   emit downloader->startDownload(this->apps[0].toObject(), QDir(this->tempDir->path()));
   this->apps.pop_front();

@@ -5,7 +5,11 @@ BUILD_TYPE=Release
 function configure_only {
   if [[ -f "CMakeLists.txt" ]]; then
     if [[ -z "$1" ]]; then
-      cmake -S . -B build -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF
+      cmake -S . -B build \
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+        -DCMAKE_CXX_FLAGS_RELEASE="-O2 -DNDEBUG -ffunction-sections -fdata-sections" \
+        -DCMAKE_EXE_LINKER_FLAGS_RELEASE="-Wl,--gc-sections -s" \
+        -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON
     else
       cmake -S . -B build -DCMAKE_BUILD_TYPE=$1 -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF
     fi

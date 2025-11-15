@@ -31,6 +31,7 @@ namespace Downloader {
       qint128 totalAppSize = 0; // Stores the size of downloadable apps
       qint128 downloadedAppSize = 0; // Stores the size already downloaded data
       qint128 currentDownloaded = 0; // Stores the size of current downloaded data
+      qint64 currentFileSize = 0; // Stores the size of the file currently being downloaded
       QueuedDownloader* downloader;
       QString mainScript;
   };

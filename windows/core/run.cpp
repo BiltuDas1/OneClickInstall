@@ -5,7 +5,7 @@ void Run::Run::Execute(QObject *parentWindow, std::function<void()> postFunc) {
   QProcess *process = new QProcess(parentWindow);
   
   if (postFunc) {
-    QObject::connect(process, &QProcess::finished, parentWindow, [=](int exitCode, QProcess::ExitStatus){
+    QObject::connect(process, &QProcess::finished, process, [=](int exitCode, QProcess::ExitStatus){
       postFunc();
       process->deleteLater(); // Ensure cleanup
     });
