@@ -1,0 +1,59 @@
+/* Basic reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+/* Navbar styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 40px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Logo section */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  width: 28px;
+  height: 28px;
+}
+
+.logo h1 {
+  color: #2b579a;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* Menu links */
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #666;
+  font-size: 15px;
+  transition: color 0.2s;
+}
+
+.menu a:hover {
+  color: #2b579a;
+}
+
+.div h2{
+   color:aqua;
+   
+
+}
