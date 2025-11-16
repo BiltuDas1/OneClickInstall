@@ -32,10 +32,14 @@ jobs:
       - name: Run Docker Container
         run: docker run -d --name pr-container -p 8000:8000 pr-test-image:latest
 
+      - name: Install Cypress (CI-only)
+        run: |
+          npm init -y
+          npm install cypress --save-dev
+
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
         with:
-          install: false
           config: baseUrl=http://localhost:8000
           spec: ${{ inputs.spec }}
           wait-on: "http://localhost:8000"
