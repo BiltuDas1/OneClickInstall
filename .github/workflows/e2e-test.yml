@@ -35,6 +35,7 @@ jobs:
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
         with:
+          install: false
           config: baseUrl=http://localhost:8000
           spec: ${{ inputs.spec }}
           wait-on: "http://localhost:8000"
