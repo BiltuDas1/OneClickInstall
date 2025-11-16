@@ -1,0 +1,15 @@
+name: E2E Test - Frontend (7Zip)
+
+on:
+  pull_request:
+    paths:
+      - "assets/**"
+
+jobs:
+  call-test:
+    uses: ./.github/workflows/e2e-test.yml
+    with:
+      os: ubuntu-latest
+      spec: cypress/e2e/download-test.cy.js
+      run-installer: false
+      artifact-name: cypress-artifacts-assets

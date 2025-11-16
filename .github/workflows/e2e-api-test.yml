@@ -1,0 +1,15 @@
+name: E2E Test - Installer (7Zip)
+
+on:
+  pull_request:
+    paths:
+      - "api/**"
+
+jobs:
+  call-test:
+    uses: ./.github/workflows/e2e-test.yml
+    with:
+      os: windows-latest
+      spec: cypress/e2e/download-test.cy.js
+      run-installer: true
+      artifact-name: cypress-artifacts-api
