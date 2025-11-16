@@ -6,9 +6,11 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    bool autoQuitMode = app.arguments().contains("/Q");
     app.setWindowIcon(QIcon(":/assets/icons/logo.ico"));
 
-    MainWindow win;
+    MainWindow win(autoQuitMode);
     win.show();
 
     return app.exec();

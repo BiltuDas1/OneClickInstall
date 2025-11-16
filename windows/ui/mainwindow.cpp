@@ -2,8 +2,8 @@
 #include "../core/run.h"
 
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(bool autoQuit, QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), m_autoQuit(autoQuit) {
   ui->setupUi(this);
 
   metadatas = new MetaData();
