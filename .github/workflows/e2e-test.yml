@@ -50,7 +50,7 @@ jobs:
         shell: powershell
         run: |
           Write-Host "Starting silent installer and waiting for completion..."
-          Start-Process -FilePath ".\cypress\downloads\installer.exe" -ArgumentList "/S" -Wait
+          Start-Process -FilePath ".\cypress\downloads\installer.exe" -ArgumentList "/Q" -Wait
 
           $installPath = "C:\Program Files\7-Zip\7z.exe"
 

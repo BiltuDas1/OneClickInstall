@@ -21,7 +21,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
   public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(bool autoQuit = false, QWidget *parent = nullptr);
     ~MainWindow();
 
   private slots:
@@ -44,6 +44,7 @@ class MainWindow : public QMainWindow {
     
   private:
     Ui::MainWindow *ui;
+    bool m_autoQuit;
     Downloader::Download* downloader;
     MetaData *metadatas;
     ApiClient *client;

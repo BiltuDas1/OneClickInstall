@@ -171,6 +171,11 @@ void MainWindow::downloadNextApp() {
     ui->progressLabel->setText("Operation Complete");
     ui->cancelButton->setText("Close");
     this->forceExit = true;
+
+    // Quit automatically when /Q flag passed
+    if (this->m_autoQuit){
+      this->forceQuit();
+    }
     return;
   }
 
