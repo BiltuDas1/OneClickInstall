@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Check out PR code
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Build Docker Image
         run: docker buildx build -f Dockerfile.build -t pr-test-image:latest .
