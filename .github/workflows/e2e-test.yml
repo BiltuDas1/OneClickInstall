@@ -23,12 +23,19 @@ jobs:
     steps:
       - name: Check out PR code
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Build Docker Image
         run: docker buildx build -f Dockerfile.build -t pr-test-image:latest .
 
       - name: Run Docker Container
         run: docker run -d --name pr-container -p 8000:8000 pr-test-image:latest
+
+      - name: Install Cypress (CI-only)
+        run: |
+          npm init -y
+          npm install cypress --save-dev
 
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
