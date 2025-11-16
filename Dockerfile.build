@@ -38,7 +38,7 @@ COPY assets/ ./assets/
 ENV DOCKER=true
 EXPOSE 8000
 
-LABEL maintainer="Biswajit Das <billionto@gmail.com>"
+LABEL org.opencontainers.image.authors="Biswajit Das <billionto@gmail.com>, Debjani Bose <bosed0737@gmail.com>, Nawej Akhatar <nawejakhatar10063@gmail.com>"
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.source=https://github.com/BiltuDas1/OneClickInstall
 
