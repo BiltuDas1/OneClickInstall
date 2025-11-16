@@ -36,6 +36,7 @@ jobs:
         run: |
           npm init -y
           npm install cypress --save-dev
+          echo "module.exports = { e2e: { setupNodeEvents(on, config) { /* implement node event listeners here */ }, }, };" > cypress.config.js
 
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
