@@ -51,3 +51,10 @@ function strip_all {
     echo "Striping Complete"
   fi
 }
+
+function inject_default_tokenid {
+  if [[ -f "build/OneClickInstall.exe" ]]; then
+    printf "/*__PLACEHOLDER_TOKEN_MUST_BE_REPLACED_BY_SERVER_SCRIPT_64_B__*/" >> build/OneClickInstall.exe
+    echo "Default TokenID Patched"
+  fi
+}

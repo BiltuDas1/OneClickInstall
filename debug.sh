@@ -12,6 +12,7 @@ if [[ -n "$COMPILE_ONLY" ]]; then
     configure_only
     build_only
     strip_all
+    inject_default_tokenid
 
     exit
   fi
