@@ -52,6 +52,14 @@ function strip_all {
   fi
 }
 
+function compress {
+  if [[ -f "build/OneClickInstall.exe" ]]; then
+    echo "Compression Started"
+    upx build/OneClickInstall.exe
+    echo "Compression Complete"
+  fi
+}
+
 function inject_default_tokenid {
   if [[ -f "build/OneClickInstall.exe" ]]; then
     printf "/*__PLACEHOLDER_TOKEN_MUST_BE_REPLACED_BY_SERVER_SCRIPT_64_B__*/" >> build/OneClickInstall.exe

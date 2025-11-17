@@ -12,6 +12,10 @@ if [[ -n "$COMPILE_ONLY" ]]; then
     configure_only
     build_only
     strip_all
+    # If PIPELINE_BUILD is not set then compress the exe
+    if [[ ! -n "$PIPELINE_BUILD" ]]; then
+      compress
+    fi
     inject_default_tokenid
 
     exit

@@ -3,6 +3,13 @@ FROM biltudas1/oneclickinstall:qt-static AS builder
 WORKDIR /mnt
 COPY . .
 
+# Install upx
+RUN cd /opt && wget -O - https://github.com/upx/upx/releases/download/v5.0.2/upx-5.0.2-amd64_linux.tar.xz | tar -xJ
+ENV PATH="/opt/upx-5.0.2-amd64_linux:${PATH}"
+
+# If this is set, then executable compression will be disable
+ARG PIPELINE_BUILD
+
 # Build Windows Application
 ENV COMPILE_ONLY=yes
 ENV RELEASE_BUILD_ONLY=yes
