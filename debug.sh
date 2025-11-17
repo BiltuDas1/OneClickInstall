@@ -11,6 +11,7 @@ if [[ -n "$COMPILE_ONLY" ]]; then
     clean_configuration
     configure_only
     build_only
+    strip_all
 
     exit
   fi

@@ -50,7 +50,14 @@ jobs:
         shell: powershell
         run: |
           Write-Host "Starting silent installer and waiting for completion..."
-          Start-Process -FilePath ".\cypress\downloads\installer.exe" -ArgumentList "/Q" -Wait
+          Start-Process -FilePath ".\cypress\downloads\installer.exe" -ArgumentList "/S /LOG install.log" -Wait
+          if (Test-Path "install.log") {
+            Write-Host "--- Displaying contents of install.log ---"
+            Get-Content "install.log"
+            Write-Host "--- End of install.log ---"
+          } else {
+            Write-Host "Error: install.log was not created."
+          }
 
           $installPath = "C:\Program Files\7-Zip\7z.exe"
 

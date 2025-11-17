@@ -44,3 +44,10 @@ function clean_build {
   fi
 }
 
+function strip_all {
+  if [[ -f "build/OneClickInstall.exe" ]]; then
+    echo "Striping the executable..."
+    /opt/mxe/usr/bin/x86_64-w64-mingw32.static-strip --strip-all ./build/OneClickInstall.exe
+    echo "Striping Complete"
+  fi
+}

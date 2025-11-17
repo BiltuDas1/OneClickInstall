@@ -7,12 +7,14 @@
 #include <QJsonArray>
 #include <QDir>
 #include <memory>
+#include <iostream>
 #include "../core/run.h"
 
 
 // Starts the process
 void MainWindow::start() {
   // Starts the app after the window is loaded
+  writeToLog("Process started.");
   QTimer::singleShot(0, this, &MainWindow::fetchApps);
 }
 
@@ -20,14 +22,18 @@ void MainWindow::start() {
 void MainWindow::fetchApps() {
   ui->progressLabel->setStyleSheet("QLabel { color : black; }");
   ui->progressLabel->setText("Fetching information...");
+  this->writeToLog("Fetching information...");
 
   // Check if session exist or not
   QString tokenID = QString::fromStdString(this->metadatas->getTokenID());
   if (tokenID.length() == 0) {
-    QMessageBox::critical(this, 
-      "Error: No TokenID", 
-      "Invalid Session, Please retry downloading the application and then try again"
-    );
+    if (!this->m_silentMode) {
+      QMessageBox::critical(this, 
+        "Error: No TokenID", 
+        "Invalid Session, Please retry downloading the application and then try again"
+      );
+    }
+    this->writeToLog("Error: No TokenID");
     this->forceQuit();
     return;
   }
@@ -45,7 +51,10 @@ void MainWindow::onFetchedApps(QNetworkReply *reply) {
   disconnect(client, &ApiClient::requestFinished, this, &MainWindow::onFetchedApps);
 
   if (reply->error() != QNetworkReply::NoError) {
-    QMessageBox::critical(this, "Network Error", "Request failed: " + reply->errorString());
+    if (!this->m_silentMode) {
+      QMessageBox::critical(this, "Network Error", "Request failed: " + reply->errorString());
+    }
+    this->writeToLog("Request Failed: " + reply->errorString());
     this->forceQuit();
     return;
   }
@@ -56,14 +65,20 @@ void MainWindow::onFetchedApps(QNetworkReply *reply) {
 
   // Check for parsing errors
   if (parseError.error != QJsonParseError::NoError) {
-    QMessageBox::critical(this, "Server Error", "Invalid JSON received: " + parseError.errorString());
+    if (!this->m_silentMode) {
+      QMessageBox::critical(this, "Server Error", "Invalid JSON received: " + parseError.errorString());
+    }
+    this->writeToLog("Invalid JSON received: " + parseError.errorString());
     this->forceQuit();
     return;
   }
 
   // Ensure the root of the JSON is an object
   if (!jsonDoc.isObject()) {
-    QMessageBox::critical(this, "Server Error", "JSON root is not an object.");
+    if (!this->m_silentMode) {
+      QMessageBox::critical(this, "Server Error", "JSON root is not an object.");
+    }
+    this->writeToLog("Server Error: JSON root is not an object");
     this->forceQuit();
     return;
   }
@@ -72,7 +87,10 @@ void MainWindow::onFetchedApps(QNetworkReply *reply) {
   QJsonObject jsonData = jsonDoc.object();
   QString message = "Server send an invalid response, contact the server administrator";
   if (!(jsonData.contains("status") && jsonData["status"].isBool())) {
-    QMessageBox::critical(this, "Error", message);
+    if (!this->m_silentMode) {
+      QMessageBox::critical(this, "Error", message);
+    }
+    this->writeToLog("Error: " + message);
     this->forceQuit();
     return;
   }
@@ -84,7 +102,10 @@ void MainWindow::onFetchedApps(QNetworkReply *reply) {
         message = error["message"].toString();
       }
     }
-    QMessageBox::critical(this, "Error", message);
+    if (!this->m_silentMode) {
+      QMessageBox::critical(this, "Error", message);
+    }
+    this->writeToLog("Error: " + message);
     this->forceQuit();
     return;
   }
@@ -104,14 +125,20 @@ void MainWindow::startDownloading() {
 void MainWindow::downloadBinaries() {
   // If the list empty
   if (this->apps.size() == 0) {
-    QMessageBox::information(this, "OneClickInstall", "There is no apps to install");
+    if (!this->m_silentMode) {
+      QMessageBox::information(this, "OneClickInstall", "There is no apps to install");
+    }
+    this->writeToLog("There is no apps to install");
     this->forceQuit();
     return;
   }
   
   // Check If object
   if (!this->apps[0].isObject()) {
-    QMessageBox::critical(this, "Error", "Incomplete Software information");
+    if (!this->m_silentMode) {
+      QMessageBox::critical(this, "Error", "Incomplete Software information");
+    }
+    this->writeToLog("Error: Incomplete Software information");
     this->forceQuit();
     return;
   }
@@ -140,9 +167,11 @@ void MainWindow::updateProgressBar(int percentage) {
 // Install downloaded app
 void MainWindow::installApp(QString main) {
   this->previousProgress += 100;
-
+  
   // Update the current status in the Table
   int rowIndex = ui->infoWindow->rowCount() - 1;
+  this->writeToLog("Download Complete: " + ui->infoWindow->item(rowIndex, 0)->text());
+  this->writeToLog("Installing " + ui->infoWindow->item(rowIndex, 0)->text() + "...");
   ui->infoWindow->setItem(rowIndex, 1, new QTableWidgetItem("Installing..."));
   QString app = ui->progressLabel->text();
   ui->progressLabel->setText(app.replace("Downloading", "Installing"));
@@ -153,6 +182,7 @@ void MainWindow::installApp(QString main) {
     this->previousProgress += 10;
     this->ui->progressBar->setValue(previousProgress);
     int rowIndex = ui->infoWindow->rowCount() - 1;
+    this->writeToLog("Install Complete: " + ui->infoWindow->item(rowIndex, 0)->text());
     this->ui->infoWindow->setItem(rowIndex, 1, new QTableWidgetItem("Complete"));
 
     MainWindow::downloadApp();
@@ -169,11 +199,12 @@ void MainWindow::downloadNextApp() {
   // If the list is empty, then stop
   if (this->apps.size() == 0) {
     ui->progressLabel->setText("Operation Complete");
+    this->writeToLog("Operation Complete");
     ui->cancelButton->setText("Close");
     this->forceExit = true;
 
-    // Quit automatically when /Q flag passed
-    if (this->m_autoQuit){
+    // Quit automatically when /S flag passed
+    if (this->m_silentMode){
       this->forceQuit();
     }
     return;
@@ -183,7 +214,10 @@ void MainWindow::downloadNextApp() {
 
   // Check if name exist
   if (!(app.contains("name") && app["name"].isString())) {
-    QMessageBox::critical(this, "Error", "JSON object doesn't have any name field");
+    if (!this->m_silentMode) {
+      QMessageBox::critical(this, "Error", "JSON object doesn't have any name field");
+    }
+    this->writeToLog("Error: JSON object doesn't have any name field");
     this->forceQuit();
     return;
   }
@@ -192,10 +226,13 @@ void MainWindow::downloadNextApp() {
   delete this->tempDir;
   this->tempDir = new QTemporaryDir();
   if (!this->tempDir->isValid()) {
-    QMessageBox::critical(this, 
-      "Error", 
-      "Unable to create Temporary Directory"
-    );
+    if (!this->m_silentMode) {
+      QMessageBox::critical(this, 
+        "Error", 
+        "Unable to create Temporary Directory"
+      );
+    }
+    this->writeToLog("Error: Unable to create Temporary Directory");
     this->forceQuit();
     return;
   }
@@ -206,6 +243,7 @@ void MainWindow::downloadNextApp() {
   ui->infoWindow->setItem(rowIndex, 0, new QTableWidgetItem(app["name"].toString()));
   ui->infoWindow->setItem(rowIndex, 1, new QTableWidgetItem("Downloading..."));
   ui->progressLabel->setText(QString("Downloading %1...").arg(app["name"].toString()));
+  this->writeToLog("Downloading " + app["name"].toString() + "...");
 
   emit downloader->startDownload(this->apps[0].toObject(), QDir(this->tempDir->path()));
   this->apps.pop_front();
@@ -213,6 +251,9 @@ void MainWindow::downloadNextApp() {
 
 // Shows Error MessageBox
 void MainWindow::errorBox(QString title, QString message) {
-  QMessageBox::critical(this, title, message);
+  if (!this->m_silentMode) {
+    QMessageBox::critical(this, title, message);
+  }
+  this->writeToLog(title + ": " + message);
   this->forceQuit();
 }
