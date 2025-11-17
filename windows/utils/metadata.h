@@ -76,7 +76,7 @@ class MetaData {
         return "";
       }
 
-      return token.toStdString();
+      return token.trimmed().toStdString();
     }
 
   public:

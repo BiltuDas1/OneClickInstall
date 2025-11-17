@@ -10,11 +10,108 @@ on:
     paths:
       - "api/**"
 
+permissions:
+  contents: read
+
 jobs:
-  call-test:
-    uses: ./.github/workflows/e2e-test.yml
-    with:
-      os: windows-latest
-      spec: cypress/e2e/download-test.cy.js
-      run-installer: true
-      artifact-name: cypress-artifacts-api
+  e2e-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: pr-test-image
+          tags:
+            type:raw,value=${{ github.sha }}
+
+      - name: Build Docker Image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile.build
+          load: true 
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            PIPELINE_BUILD=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run Docker Container
+        run: docker run -d --name pr-container -p 8000:8000 ${{ steps.meta.outputs.tags }}
+
+      - name: Install Wine
+        run: |
+          sudo dpkg --add-architecture i386
+          
+          sudo mkdir -pm755 /etc/apt/keyrings
+          sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+          
+          sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
+          
+          sudo apt-get update
+          sudo apt-get install -y --install-recommends winehq-stable
+
+      - name: Install Cypress (CI-only)
+        run: |
+          npm init -y
+          npm install cypress --save-dev
+
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v6
+        with:
+          config: baseUrl=http://localhost:8000
+          spec: cypress/e2e/download-test.cy.js
+          wait-on: "http://localhost:8000"
+          wait-on-timeout: 120
+
+      - name: Run and Verify Installer
+        shell: bash
+        run: |
+          echo "Starting silent installer with Wine..."
+          wine64 ./cypress/downloads/installer.exe /S /LOG install.log
+          
+          echo "Waiting for Wine processes to complete..."
+          wineserver -w
+          
+          echo "Installer process finished."
+
+          if [ -f "install.log" ]; then
+            echo "--- Displaying contents of install.log ---"
+            cat install.log
+          else
+            echo "Error: install.log was not created."
+          fi
+
+          installPath="$HOME/.wine/drive_c/Program Files/7-Zip/7z.exe"
+          if [ -f "$installPath" ]; then
+            echo "Installation successful!"
+          else
+            echo "Error: Installation failed! File not found at $installPath"
+            exit 1
+          fi
+
+      - name: Stop Docker Container
+        if: always()
+        run: docker stop pr-container && docker rm pr-container
+
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts-api
+          path: |
+            cypress/videos
+            cypress/screenshots
+            install.log

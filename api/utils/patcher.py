@@ -1,7 +1,7 @@
 import sys
 
 # The placeholder used in the C++ code
-PLACEHOLDER = b"/*_MANDATORY_STEP_POPULATE_THIS_FIELD_VIA_SCRIPT_BEFORE_RUN_ */"
+PLACEHOLDER = b"/*__PLACEHOLDER_TOKEN_MUST_BE_REPLACED_BY_SERVER_SCRIPT_64_B__*/"
 BUFFER_SIZE = 64
 
 def patch_executable(data: bytearray, new_token: str) -> str | bytearray:
