@@ -33,6 +33,7 @@ WORKDIR /app
 # Copying files from builder
 COPY --from=builder /mnt/requirements.txt .
 COPY --from=builder /mnt/build/OneClickInstall.exe .
+COPY --from=builder /mnt/scripts/healthcheck.py .
 
 # Installing Packages
 RUN pip install -r requirements.txt
@@ -48,5 +49,9 @@ EXPOSE 8000
 LABEL org.opencontainers.image.authors="Biswajit Das <billionto@gmail.com>, Debjani Bose <bosed0737@gmail.com>, Nawej Akhatar <nawejakhatar10063@gmail.com>"
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.source=https://github.com/BiltuDas1/OneClickInstall
+
+# Health Check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD [ "python", "healthcheck.py" ]
 
 ENTRYPOINT [ "uvicorn", "api.server:app", "--host", "0.0.0.0", "--port", "8000", "--use-colors" ]
