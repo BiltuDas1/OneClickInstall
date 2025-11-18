@@ -4,14 +4,13 @@
 #include "toml/toml.hpp"
 #include <string>
 #include <QFile>
+#include <QApplication>
 #include <QByteArray>
 #include <string_view>
 #include <map>
 
-#define placeholderText "/*_MANDATORY_STEP_POPULATE_THIS_FIELD_VIA_SCRIPT_BEFORE_RUN_ */"
-
-// Stores the tokenID of the Application
-inline volatile const char tokenID[64] = placeholderText;
+#define TOKENID_LENGTH 64
+#define DEFAULT_TOKENID "/*__PLACEHOLDER_TOKEN_MUST_BE_REPLACED_BY_SERVER_SCRIPT_64_B__*/"
 
 // Stores MetaDatas about the Project, from pyproject.toml
 class MetaData {
@@ -22,6 +21,7 @@ class MetaData {
     std::string apiVersionStr;
     std::string repositoryUrl;
     std::map<std::string, std::string> endpoints;
+    std::string tokenID;
 
     // Loads the api settings
     void loadAPISettings() {
@@ -55,6 +55,30 @@ class MetaData {
 
     }
 
+    // Loading TokenID from the end of the executable file
+    std::string loadTokenID() {
+      QString exePath = QCoreApplication::applicationFilePath();
+      QFile exeFile(exePath);
+
+      if (!exeFile.open(QIODevice::ReadOnly)) {
+        return "";
+      }
+
+      if (!exeFile.seek(exeFile.size() - TOKENID_LENGTH)) {
+        exeFile.close();
+        return "";
+      }
+
+      QByteArray token = exeFile.read(TOKENID_LENGTH);
+      exeFile.close();
+
+      if (token.length() != TOKENID_LENGTH) {
+        return "";
+      }
+
+      return token.trimmed().toStdString();
+    }
+
   public:
     explicit MetaData() {
       QFile tomlFile(":/pyproject.toml");
@@ -72,6 +96,9 @@ class MetaData {
         throw std::runtime_error("Error parsing pyproject.toml: " + std::string(err.description()));
       }
 
+      // Loading TokenID
+      this->tokenID = this->loadTokenID();
+
       // Storing endpoints
       this->loadAPISettings();
     }
@@ -83,11 +110,10 @@ class MetaData {
 
     // Returns the tokenID of the Current Application
     std::string getTokenID() const {
-      std::string token = const_cast<const char*>(tokenID);
-      if (token == placeholderText) {
+      if (this->tokenID == DEFAULT_TOKENID) {
         return "";
       }
-      return token;
+      return this->tokenID;
     }
 
     // Returns the base url

@@ -3,6 +3,13 @@ FROM biltudas1/oneclickinstall:qt-static AS builder
 WORKDIR /mnt
 COPY . .
 
+# Install upx
+RUN cd /opt && wget -O - https://github.com/upx/upx/releases/download/v5.0.2/upx-5.0.2-amd64_linux.tar.xz | tar -xJ
+ENV PATH="/opt/upx-5.0.2-amd64_linux:${PATH}"
+
+# If this is set, then executable compression will be disable
+ARG PIPELINE_BUILD
+
 # Build Windows Application
 ENV COMPILE_ONLY=yes
 ENV RELEASE_BUILD_ONLY=yes
@@ -26,6 +33,7 @@ WORKDIR /app
 # Copying files from builder
 COPY --from=builder /mnt/requirements.txt .
 COPY --from=builder /mnt/build/OneClickInstall.exe .
+COPY --from=builder /mnt/scripts/healthcheck.py .
 
 # Installing Packages
 RUN pip install -r requirements.txt
@@ -41,5 +49,9 @@ EXPOSE 8000
 LABEL org.opencontainers.image.authors="Biswajit Das <billionto@gmail.com>, Debjani Bose <bosed0737@gmail.com>, Nawej Akhatar <nawejakhatar10063@gmail.com>"
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.source=https://github.com/BiltuDas1/OneClickInstall
+
+# Health Check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD [ "python", "healthcheck.py" ]
 
 ENTRYPOINT [ "uvicorn", "api.server:app", "--host", "0.0.0.0", "--port", "8000", "--use-colors" ]

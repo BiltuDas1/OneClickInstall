@@ -21,7 +21,7 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
   public:
-    explicit MainWindow(bool autoQuit = false, QWidget *parent = nullptr);
+    explicit MainWindow(bool silentMode = false, QString logFilePath = "", QWidget *parent = nullptr);
     ~MainWindow();
 
   private slots:
@@ -44,7 +44,7 @@ class MainWindow : public QMainWindow {
     
   private:
     Ui::MainWindow *ui;
-    bool m_autoQuit;
+    bool m_silentMode;
     Downloader::Download* downloader;
     MetaData *metadatas;
     ApiClient *client;
@@ -53,7 +53,9 @@ class MainWindow : public QMainWindow {
     int previousProgress = 0;
     QTemporaryDir *tempDir;
     QJsonArray apps;
-    
+    QString m_logFilePath;
+
+    void writeToLog(const QString& message);
     void start();
     void fetchApps();
     void downloadBinaries();

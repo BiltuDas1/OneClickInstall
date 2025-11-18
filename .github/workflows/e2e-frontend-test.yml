@@ -4,12 +4,53 @@ on:
   pull_request:
     paths:
       - "assets/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "assets/**"
 
 jobs:
-  call-test:
-    uses: ./.github/workflows/e2e-test.yml
-    with:
-      os: ubuntu-latest
-      spec: cypress/e2e/download-test.cy.js
-      run-installer: false
-      artifact-name: cypress-artifacts-assets
+  test-in-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        run: docker buildx build -f Dockerfile.build -t pr-test-image:latest . --build-arg PIPELINE_BUILD="true"
+
+      - name: Run Docker Container
+        run: docker run -d --name pr-container -p 8000:8000 pr-test-image:latest
+
+      - name: Install Cypress (CI-only)
+        run: |
+          npm init -y
+          npm install cypress --save-dev
+
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v6
+        with:
+          config: baseUrl=http://localhost:8000
+          spec: cypress/e2e/download-test.cy.js
+          wait-on: "http://localhost:8000"
+          wait-on-timeout: 120
+
+      - name: Stop Docker Container
+        if: always()
+        run: docker stop pr-container && docker rm pr-container
+
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts-assets
+          path: |
+            cypress/videos
+            cypress/screenshots

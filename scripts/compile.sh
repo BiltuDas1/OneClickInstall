@@ -44,3 +44,25 @@ function clean_build {
   fi
 }
 
+function strip_all {
+  if [[ -f "build/OneClickInstall.exe" ]]; then
+    echo "Striping the executable..."
+    /opt/mxe/usr/bin/x86_64-w64-mingw32.static-strip --strip-all ./build/OneClickInstall.exe
+    echo "Striping Complete"
+  fi
+}
+
+function compress {
+  if [[ -f "build/OneClickInstall.exe" ]]; then
+    echo "Compression Started"
+    upx build/OneClickInstall.exe
+    echo "Compression Complete"
+  fi
+}
+
+function inject_default_tokenid {
+  if [[ -f "build/OneClickInstall.exe" ]]; then
+    printf "/*__PLACEHOLDER_TOKEN_MUST_BE_REPLACED_BY_SERVER_SCRIPT_64_B__*/" >> build/OneClickInstall.exe
+    echo "Default TokenID Patched"
+  fi
+}

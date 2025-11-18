@@ -18,6 +18,10 @@ RUN \
 ENV CC="ccache x86_64-w64-mingw32.shared-gcc"
 ENV CXX="ccache x86_64-w64-mingw32.shared-g++"
 
+# Install upx
+RUN cd /opt && wget -O - https://github.com/upx/upx/releases/download/v5.0.2/upx-5.0.2-amd64_linux.tar.xz | tar -xJ
+ENV PATH="/opt/upx-5.0.2-amd64_linux:${PATH}"
+
 WORKDIR /mnt
 
 # Install Packages

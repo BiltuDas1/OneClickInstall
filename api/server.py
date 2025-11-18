@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from .routes import download, app_v1
+from .routes import download, app_v1, status
 
 
 app = FastAPI()
@@ -21,3 +21,4 @@ async def home(request: Request):
 # Routes
 download.createDownloadRouter(app)
 app_v1.createAppsAPI(app)
+status.createHealthCheckAPI(app)
