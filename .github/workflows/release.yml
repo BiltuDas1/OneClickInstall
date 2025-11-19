@@ -14,6 +14,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
+    if: vars.ENABLE_RELEASE == 'true'
     outputs:
       version: ${{ steps.version.outputs.VERSION }}
       is_prerelease: ${{ steps.version.outputs.IS_PRERELEASE }}
