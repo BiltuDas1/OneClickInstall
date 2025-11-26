@@ -28,3 +28,5 @@ services:
     ports:
       - "8000:8000"
 ```
+
+For more environments check [README.md](/README.md#environments)
