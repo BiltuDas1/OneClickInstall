@@ -1,74 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OneClickInstall</title>
-  <link rel="stylesheet" href="/assets/css/test.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneClickInstall</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/test.css">
 </head>
-
 <body>
 
-  <!-- 🔹 Header/Navbar -->
-  <header class="navbar">
-    <div class="logo">
-      <img src="#" alt="OneClickInstall Logo">
-      <h1>OneClickInstall</h1>
+    <div id="welcomeScreen" class="welcomeScreen">
+        <div class="welcome-content">
+            <i class="fa-solid fa-rocket bounce"></i>
+            <h1>Welcome to OneClickInstall</h1>
+            <p>Ditch the manual downloads. Select all your essential software in one place, click install, and watch the magic happen! Simple, Fast, and Secure.</p>
+            <button onclick="closeWelcome()" class="start-btn">Get Started</button>
+        </div>
     </div>
 
-    <nav class="menu">
-      <a href="How_To_Use.html">How to Use</a>
-    </nav>
-  </header>
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-cloud-arrow-down"></i> OneClickInstall
+        </div>
+        
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search apps (e.g. Chrome, Zoom)..." onkeyup="searchApps()">
+        </div>
 
+        <button class="how-to-use-btn" onclick="openGuide()">
+            <i class="fa-regular fa-circle-question"></i> How to Use
+        </button>
+    </header>
 
-  <h1>Select the Apps You Want</h1> <br>
-  <p>Choose your favorite apps and click Install.</p><br>
+    <div class="container">
+        <aside class="sidebar">
+            <ul id="categoryList">
+                <li class="active" onclick="filterCategory('all', this)">All Apps <span class="count" id="count-all">0</span></li>
+                <li onclick="filterCategory('browsers', this)">Browsers <span class="count" id="count-browsers">0</span></li>
+                <li onclick="filterCategory('development', this)">Development <span class="count" id="count-development">0</span></li>
+                <li onclick="filterCategory('multimedia', this)">Multimedia <span class="count" id="count-multimedia">0</span></li>
+                <li onclick="filterCategory('utilities', this)">Utilities <span class="count" id="count-utilities">0</span></li>
+            </ul>
+        </aside>
 
+        <main class="app-grid" id="appContainer">
+            </main>
+    </div>
 
-  <input type="text" placeholder="Search apps..." />
-  <button type="button">Search</button>
+    <footer class="sticky-footer">
+        <div class="footer-left">
+            <div class="selection-info">
+                <i class="fa-solid fa-circle-check" style="color: #22c55e;"></i>
+                <span id="selectedCount">0</span> Apps Selected
+            </div>
+            <span class="copyright-text">© 2025 OneClick Project. Developed for rapid installation.</span>
+        </div>
 
+        <button class="install-btn" id="installBtn">
+            INSTALL SELECTED (<span id="btnCount">0</span>) <i class="fa-solid fa-download"></i>
+        </button>
+    </footer>
 
-  <h2>Popular Apps</h2> <br>
+    <div id="guideModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeGuide()">&times;</span>
+            <h2><i class="fa-solid fa-book-open"></i> How to Use OneClickInstall</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-icon">1</div>
+                    <p><strong>Browse & Search:</strong> Use the category filter on the left or the search bar on top to find your desired applications.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">2</div>
+                    <p><strong>Select Your Apps:</strong> Click on the application cards to add them to your installation queue. Selected apps will show a green border.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">3</div>
+                    <p><strong>Review Selection:</strong> Check the counter at the bottom sticky bar to confirm the total number of applications selected.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">4</div>
+                    <p><strong>Initiate Download:</strong> Click the large green **INSTALL SELECTED** button to start the bundled download process.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">5</div>
+                    <p><strong>Confirmation SMS/Email:</strong> Once the download is complete, a confirmation notification (simulated SMS/Email) will be triggered.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <form>
-
-    <label>
-      <input type="checkbox" name="app" value="chrome">
-      Google Chrome
-    </label>
-    <br><br>
-
-    <label>
-      <input type="checkbox" name="app" value="vlc">
-      VLC Media Player
-    </label>
-    <br><br>
-
-    <label>
-      <input type="checkbox" name="app" value="spotify">
-      Spotify
-    </label>
-    <br><br>
-
-    <label>
-      <input type="checkbox" name="app" value="whatsapp">
-      Whatsapp
-    </label>
-    <br><br>
-
-    <label>
-      <input type="checkbox" name="app" value="7zip">
-      7Zip
-    </label>
-
-
-    <button type="button">Install Selected</button>
-  </form>
-
-
+    <script src="/assets/js/test.js"></script>
 </body>
-
 </html>
