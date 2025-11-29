@@ -3,7 +3,10 @@ name = "oneclickinstall"
 version = "0.0.1"
 description = "Software that allows to install Application Automatically"
 authors = [
-    {name = "Biswajit Das",email = "billionto@gmail.com"}
+    { name = "Biswajit Das", email = "billionto@gmail.com" },
+    { name = "Chandranath Sahoo", email = "sahoochandranath@gmail.com" },
+    { name = "Debjani Bose", email = "bosed0737@gmail.com" },
+    { name = "Nawej Akhatar", email = "nawejakhatar10063@gmail.com" },
 ]
 license-files = ["LICENSE"]
 readme = "README.md"
@@ -14,7 +17,7 @@ dependencies = [
     "jinja2 (>=3.1.6,<4.0.0)",
     "sqlalchemy (>=2.0.44,<3.0.0)",
     "pymysql (>=1.1.2,<2.0.0)",
-    "cryptography (>=46.0.3,<47.0.0)"
+    "cryptography (>=46.0.3,<47.0.0)",
 ]
 
 [project.urls]
@@ -28,14 +31,10 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-packages = [
-    { include = "api" }
-]
+packages = [{ include = "api" }]
 
 [dependency-groups]
-dev = [
-    "watchfiles (>=1.1.0,<2.0.0)",
-]
+dev = ["watchfiles (>=1.1.0,<2.0.0)"]
 
 [tool.oneclickinstall.api]
 base_url = "http://127.0.0.1:8000"
@@ -43,6 +42,6 @@ api_version = 1
 
 [tool.oneclickinstall.api.endpoints]
 listApps = "/v1/fetch"
-getDownloadLinks = "/v1/getFiles"
 scripts = "/v1/script"
-
+createToken = "/v1/createToken"
+appsList = "/v1/apps"

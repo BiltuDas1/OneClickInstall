@@ -9,8 +9,12 @@ it('download executable test', () => {
 
   // Start
   cy.visit('/');
-  cy.get('input[value="7zip"]').check();
-  cy.get('button').first().click();
+
+  // Find the card containing '7Zip' and click it
+  cy.contains('.app-card', '7Zip').click();
+
+  // Click the main install button
+  cy.get('#installBtn').click();
 
   cy.log(`Waiting for file: ${filePath}`);
   cy.readFile(filePath, 'binary', { timeout: 20000 })

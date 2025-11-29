@@ -1,4 +1,4 @@
-const DEFAULT_BASE_URL = 'http://127.0.0.1:8000';
+const DEFAULT_BASE_URL = 'http://' + window.location.host;
 
 let API_BASE_URL = DEFAULT_BASE_URL;
 let API_ENDPOINTS = {
@@ -62,7 +62,7 @@ async function fetchData() {
                 color: app.color || '#333333'
             }));
 
-            SidebarCounts();
+            sidebarCounts();
             renderApps();
 
         } else {

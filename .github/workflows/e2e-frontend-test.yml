@@ -46,7 +46,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Run Docker Container
-        run: docker run -d --name pr-container -p 8000:8000 ${{ steps.meta.outputs.tags }}
+        run: docker run -d --name pr-container -p 8000:8000 -e "MYSQL_URI=${{ secrets.MYSQL_URI }}" ${{ steps.meta.outputs.tags }}
 
       - name: Install Cypress (CI-only)
         run: |
