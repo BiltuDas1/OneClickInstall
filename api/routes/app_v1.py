@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse, FileResponse
 import os
 from starlette.background import BackgroundTask
 
-def transform_apps(raw_items, tokenID):
+def transform_apps(raw_items, tokenID, host="http://localhost:8000"):
   grouped = {}
 
   for item in raw_items:
@@ -30,7 +30,7 @@ def transform_apps(raw_items, tokenID):
       # Add script info (using your /v1/script/{id} endpoint)
       grouped[app_id]["scripts"].append({
           "filename": item["main"],
-          "url": f"http://localhost:8000/v1/script/{app_id}",
+          "url": f"{host}/v1/script/{app_id}",
           "size": len(item["main"])  # OPTIONAL: replace with real script size
       })
 
@@ -41,7 +41,7 @@ def transform_apps(raw_items, tokenID):
   }
 
 
-def createAppsAPI(app: fastapi.FastAPI):
+def createAppsAPI(app: fastapi.FastAPI, PROJECT_CONFIG: dict):
   @app.post("/v1/fetch")
   async def fetch_apps(request: token.Token):
     """
@@ -86,7 +86,8 @@ def createAppsAPI(app: fastapi.FastAPI):
 
         # Process result
         if result and len(result) > 0:
-          transformed = transform_apps(result, request.tokenID)
+          host = PROJECT_CONFIG["tool"]["oneclickinstall"]["api"]["base_url"]
+          transformed = transform_apps(result, request.tokenID, host)
           return JSONResponse(status_code=200,content=transformed)
         else:
           resp['status_code'] = 404
@@ -150,12 +151,14 @@ def createAppsAPI(app: fastapi.FastAPI):
           for app_id in request.appIds:
             DB.Query(link_query, {"uid": token_id, "app_id": app_id})
 
+      host = PROJECT_CONFIG["tool"]["oneclickinstall"]["api"]["base_url"]
+
       return make_response(
         True,
         201,
         "Token created successfully",
         token=new_token,
-        download_url=f"http://localhost:8000/download/{new_token}"
+        download_url=f"{host}/download/{new_token}"
       )
     except error.DatabaseError as e:
       return make_response(

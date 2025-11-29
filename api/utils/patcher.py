@@ -9,7 +9,7 @@ def patch_executable(data: bytearray, new_token: str) -> str | bytearray:
   Finds the placeholder in the executable and replaces it with the new token.
   """
   new_token_bytes = new_token.encode('utf-8')
-  if len(new_token_bytes) >= BUFFER_SIZE:
+  if len(new_token_bytes) > BUFFER_SIZE:
     return f"New token is too long. Maximum length is {BUFFER_SIZE - 1} characters."
 
   # Pad the new token with null bytes to match the buffer size
