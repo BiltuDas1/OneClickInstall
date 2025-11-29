@@ -370,3 +370,6 @@ header {
 }
 
 
+.hidden {
+    display: none;
+}
