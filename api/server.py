@@ -3,9 +3,12 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from .routes import download, app_v1, status
+import tomllib
 
 
 app = FastAPI()
+with open("pyproject.toml", "rb") as f:
+  PROJECT_CONFIG = tomllib.load(f)
 
 # Mount the assets folder at root URL
 app.mount("/css", StaticFiles(directory="assets/css/", html=True), name="css")
@@ -20,5 +23,5 @@ async def home(request: Request):
 
 # Routes
 download.createDownloadRouter(app)
-app_v1.createAppsAPI(app)
+app_v1.createAppsAPI(app, PROJECT_CONFIG)
 status.createHealthCheckAPI(app)
