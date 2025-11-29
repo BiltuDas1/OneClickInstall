@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,22 +9,14 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="css/test.css">
 </head>
-<body>
 
-    <div id="welcomeScreen" class="welcomeScreen">
-        <div class="welcome-content">
-            <i class="fa-solid fa-rocket bounce"></i>
-            <h1>Welcome to OneClickInstall</h1>
-            <p>Ditch the manual downloads. Select all your essential software in one place, click install, and watch the magic happen! Simple, Fast, and Secure.</p>
-            <button onclick="closeWelcome()" class="start-btn">Get Started</button>
-        </div>
-    </div>
+<body>
 
     <header>
         <div class="logo">
-            <i class="fa-solid fa-cloud-arrow-down"></i> OneClickInstall
+            <i class="fa-solid fa-layer-group"></i> OneClickInstall
         </div>
-        
+
         <div class="search-bar">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="searchInput" placeholder="Search apps (e.g. Chrome, Zoom)..." onkeyup="searchApps()">
@@ -37,16 +30,21 @@
     <div class="container">
         <aside class="sidebar">
             <ul id="categoryList">
-                <li class="active" onclick="filterCategory('all', this)">All Apps <span class="count" id="count-all">0</span></li>
-                <li onclick="filterCategory('browsers', this)">Browsers <span class="count" id="count-browsers">0</span></li>
-                <li onclick="filterCategory('development', this)">Development <span class="count" id="count-development">0</span></li>
-                <li onclick="filterCategory('multimedia', this)">Multimedia <span class="count" id="count-multimedia">0</span></li>
-                <li onclick="filterCategory('utilities', this)">Utilities <span class="count" id="count-utilities">0</span></li>
+                <li class="active" onclick="filterCategory('all', this)">All Apps <span class="count"
+                        id="count-all">0</span></li>
+                <li onclick="filterCategory('browsers', this)">Browsers <span class="count" id="count-browsers">0</span>
+                </li>
+                <li onclick="filterCategory('development', this)">Development <span class="count"
+                        id="count-development">0</span></li>
+                <li onclick="filterCategory('multimedia', this)">Multimedia <span class="count"
+                        id="count-multimedia">0</span></li>
+                <li onclick="filterCategory('utilities', this)">Utilities <span class="count"
+                        id="count-utilities">0</span></li>
             </ul>
         </aside>
 
         <main class="app-grid" id="appContainer">
-            </main>
+        </main>
     </div>
 
     <footer class="sticky-footer">
@@ -55,11 +53,11 @@
                 <i class="fa-solid fa-circle-check" style="color: #22c55e;"></i>
                 <span id="selectedCount">0</span> Apps Selected
             </div>
-            <span class="copyright-text">© 2025 OneClick Project. Developed for rapid installation.</span>
+            <!-- <span class="right-text">OneClickInstall Developed for rapid installation.</span> -->
         </div>
 
         <button class="install-btn" id="installBtn">
-            INSTALL SELECTED (<span id="btnCount">0</span>) <i class="fa-solid fa-download"></i>
+            INSTALL  <i class="fa-solid fa-download"></i>
         </button>
     </footer>
 
@@ -70,28 +68,37 @@
             <div class="steps-container">
                 <div class="step">
                     <div class="step-icon">1</div>
-                    <p><strong>Browse & Search:</strong> Use the category filter on the left or the search bar on top to find your desired applications.</p>
+                    <p><strong>Browse & Search:</strong> Use the category filter on the left or the search bar on top to
+                        find your desired applications.</p>
                 </div>
                 <div class="step">
                     <div class="step-icon">2</div>
-                    <p><strong>Select Your Apps:</strong> Click on the application cards to add them to your installation queue. Selected apps will show a green border.</p>
+                    <p><strong>Select Your Apps:</strong> Click on the cards to add them to your installation queue.
+                        Selected apps will show a green border.</p>
                 </div>
                 <div class="step">
                     <div class="step-icon">3</div>
-                    <p><strong>Review Selection:</strong> Check the counter at the bottom sticky bar to confirm the total number of applications selected.</p>
+                    <p><strong>Review Selection:</strong> Check the counter at the bottom sticky bar to confirm the
+                        total number of applications selected.</p>
                 </div>
                 <div class="step">
                     <div class="step-icon">4</div>
-                    <p><strong>Initiate Download:</strong> Click the large green **INSTALL SELECTED** button to start the bundled download process.</p>
+                    <p><strong>Initiate Download:</strong> Click the large green INSTALL SELECTED button to
+                        start
+                        the bundled download process.</p>
                 </div>
                 <div class="step">
                     <div class="step-icon">5</div>
-                    <p><strong>Confirmation SMS/Email:</strong> Once the download is complete, a confirmation notification (simulated SMS/Email) will be triggered.</p>
+                    <p><strong>Confirmation :</strong> Once the download is complete, a confirmation
+                        notification will be triggered.</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <script src="js/script.js"></script>
 </body>
+
 </html>
