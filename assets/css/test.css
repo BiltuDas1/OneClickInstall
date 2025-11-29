@@ -1,4 +1,3 @@
-/* --- Base Styles --- */
 * {
     margin: 0;
     padding: 0;
@@ -10,96 +9,11 @@ body {
     background-color: #f3f4f6;
     color: #333;
     padding-bottom: 90px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-/* --- 1. Welcome Screen Animation --- */
-#welcomeScreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #1d4ed8, #2563eb);
-    /* Deeper Blue */
-    z-index: 2000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    text-align: center;
-    transition: opacity 0.5s ease;
-}
-
-.welcome-content {
-    animation: scaleIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    /* Springy entry */
-    max-width: 600px;
-    padding: 20px;
-}
-
-.welcome-content i {
-    font-size: 60px;
-    margin-bottom: 20px;
-}
-
-.welcome-content h1 {
-    font-size: 3.5rem;
-    margin-bottom: 10px;
-}
-
-.welcome-content p {
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-    opacity: 0.9;
-    line-height: 1.6;
-}
-
-.start-btn {
-    padding: 15px 40px;
-    border: none;
-    background: white;
-    color: #2563eb;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 40px;
-    cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    transition: transform 0.2s;
-}
-
-.start-btn:hover {
-    transform: scale(1.05);
-}
-
-/* Animation Keyframes */
-@keyframes scaleIn {
-
-    /* Entry Animation */
-    from {
-        opacity: 0;
-        transform: scale(0.7);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.welcomeScreen.exit {
-    animation: scaleOut 0.5s ease-in forwards;
-    /* Exit Animation */
-    pointer-events: none;
-}
-
-@keyframes scaleOut {
-    to {
-        opacity: 0;
-        transform: scale(1.1);
-    }
-}
-
-/* --- Header, Sidebar, Grid Styles (Same as before) --- */
 header {
     background: white;
     padding: 15px 30px;
@@ -145,6 +59,8 @@ header {
     align-items: center;
     gap: 10px;
     color: #64748b;
+    margin-left: auto;
+    margin-right:1rem;
 }
 
 .search-bar input {
@@ -152,27 +68,31 @@ header {
     background: transparent;
     outline: none;
     width: 100%;
+    font-size: 16px;
 }
 
 .container {
     display: flex;
-    max-width: 1400px;
+    max-width: 100%;
     margin: 30px auto;
     padding: 0 20px;
     gap: 30px;
 }
 
 .sidebar {
-    width: 260px;
+    width: 220px;
     flex-shrink: 0;
+    padding: 20px 0;
+
 }
 
 .sidebar ul {
-    list-style: none;
+    list-style:none;
 }
 
 .sidebar li {
-    padding: 12px 15px;
+    font-size: 18px;
+    padding: 10px 20px;
     margin-bottom: 5px;
     border-radius: 8px;
     cursor: pointer;
@@ -223,6 +143,7 @@ header {
     height: 180px;
     justify-content: space-between;
     transition: all 0.2s;
+    
 }
 
 .app-card:hover {
@@ -241,9 +162,22 @@ header {
 }
 
 .app-icon {
-    font-size: 32px;
+    background-color: white;
     width: 40px;
-    text-align: center;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.app-icon img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    transition: transform 0.2s;
 }
 
 .app-details h3 {
@@ -323,35 +257,36 @@ header {
     gap: 8px;
 }
 
-.copyright-text {
+/* .right-text {
     font-size: 12px;
     color: #94a3b8;
-}
+} */
+
 
 .install-btn {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
+    background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
-    padding: 12px 30px;
-    border-radius: 8px;
+    padding: 15px 35px;
+    border-radius: 10px;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 16px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.5);
-    /* Stronger glow */
+
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.7);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .install-btn:hover {
-    background: linear-gradient(135deg, #16a34a, #15803d);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.7);
+
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(16, 185, 129, 0.9);
 }
 
-/* --- 2. How to Use Modal Styling (Improved) --- */
 .modal {
     display: none;
     position: fixed;
@@ -362,21 +297,17 @@ header {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
-    /* Better blur */
     justify-content: center;
     align-items: center;
 }
 
 .modal-content {
     background: linear-gradient(180deg, #ffffff, #f9f9f9);
-    /* Slight gradient */
     padding: 35px;
     border-radius: 15px;
     width: 550px;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
     position: relative;
-    animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    /* Faster, smoother entry */
 }
 
 .modal-content h2 {
@@ -416,9 +347,7 @@ header {
 
 .step-icon {
     background: #e0f2f1;
-    /* Light Teal */
     color: #0d9488;
-    /* Dark Teal */
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -429,7 +358,6 @@ header {
     font-size: 18px;
     flex-shrink: 0;
     box-shadow: 0 0 0 4px #ccfbf1;
-    /* Ring effect */
 }
 
 .step p {
@@ -440,3 +368,5 @@ header {
 .step p strong {
     color: #333;
 }
+
+
