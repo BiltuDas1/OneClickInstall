@@ -19,6 +19,7 @@ Check [docs/DEVBUILD.md](docs/DEVBUILD.md) for more information
 | Environment Name | Description                                                                                                                   |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `MYSQL_URI`      | Sets the MySQL [Database Connection URI](https://dev.mysql.com/doc/connector-j/en/connector-j-reference-jdbc-url-format.html) |
+| `HOST_ADDRESS`   | The Hostname of the current deployed instance                                                                                 |
 
 ### Development Environment
 This environment supports all the environment of the production environment and the following environments:

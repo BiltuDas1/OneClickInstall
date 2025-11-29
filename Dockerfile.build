@@ -34,6 +34,7 @@ WORKDIR /app
 COPY --from=builder /mnt/requirements.txt .
 COPY --from=builder /mnt/build/OneClickInstall.exe .
 COPY --from=builder /mnt/scripts/healthcheck.py .
+COPY --from=builder /mnt/pyproject.toml .
 
 # Installing Packages
 RUN pip install -r requirements.txt
@@ -46,7 +47,7 @@ COPY assets/ ./assets/
 ENV DOCKER=true
 EXPOSE 8000
 
-LABEL org.opencontainers.image.authors="Biswajit Das <billionto@gmail.com>, Debjani Bose <bosed0737@gmail.com>, Nawej Akhatar <nawejakhatar10063@gmail.com>"
+LABEL org.opencontainers.image.authors="Biswajit Das <billionto@gmail.com>, Chandranath Sahoo <sahoochandranath@gmail.com>, Debjani Bose <bosed0737@gmail.com>, Nawej Akhatar <nawejakhatar10063@gmail.com>"
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.source=https://github.com/BiltuDas1/OneClickInstall
 
