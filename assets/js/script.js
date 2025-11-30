@@ -4,7 +4,7 @@ let API_BASE_URL = DEFAULT_BASE_URL;
 let API_ENDPOINTS = {
   fetch: '/v1/apps',
   install: '/v1/createToken',
-  download: '/v1/download'
+  download: '/download'
 };
 
 let appsData = [];
