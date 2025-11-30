@@ -20,6 +20,22 @@ jobs:
         with:
           submodules: "recursive"
 
+      - name: Install TOML editor
+        run: pip install tomlkit
+
+      - name: Modify base_url
+        run: |
+          python -c "
+          import tomlkit
+          with open('pyproject.toml', 'r') as f:
+              doc = tomlkit.parse(f.read())
+          
+          doc['tool']['oneclickinstall']['api']['base_url'] = '${{ vars.DEPLOY_BASE_URL }}'
+          
+          with open('pyproject.toml', 'w') as f:
+              f.write(doc.as_string())
+          "
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:

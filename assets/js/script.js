@@ -1,9 +1,10 @@
-const DEFAULT_BASE_URL = 'http://' + window.location.host;
+const DEFAULT_BASE_URL = (window.location.port !== '') ? ('http://' + window.location.host) : ('https://' + window.location.host)
 
 let API_BASE_URL = DEFAULT_BASE_URL;
 let API_ENDPOINTS = {
   fetch: '/v1/apps',
   install: '/v1/createToken',
+  download: '/v1/download'
 };
 
 let appsData = [];
@@ -100,7 +101,8 @@ async function handleInstall() {
 
     if (result.status) {
       // Download the exe
-      await axios.get(result.downloadUrl, { responseType: 'blob' })
+      const downloadUrl = `${API_BASE_URL}${API_ENDPOINTS.download}/${result.tokenID}`
+      await axios.get(downloadUrl, { responseType: 'blob' })
         .then((response) => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.getElementById('downloadlink');

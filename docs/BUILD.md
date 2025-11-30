@@ -4,6 +4,8 @@
   - [Building on Windows](#building-on-windows)
     - [Windows Application](#windows-application)
     - [Web Application](#web-application)
+  - [FAQ](#faq)
+      - [OneClickInstall.exe is showing `Request Failed: Connection refused`](#oneclickinstallexe-is-showing-request-failed-connection-refused)
 
 ## Build using Docker (Recommended)
 
@@ -34,3 +36,7 @@ poetry install --without dev
 ```
 poetry run uvicorn api.server:app
 ```
+
+## FAQ
+#### OneClickInstall.exe is showing `Request Failed: Connection refused`  
+It usually happens if the OneClickInstall.exe has been build without changing the `base_url` in the [pyproject.toml](/pyproject.toml#L40), the `base_url` should always be the same as the host where the backend server located.
