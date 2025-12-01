@@ -1,6 +1,8 @@
 name: E2E Test - Frontend (7Zip)
 
 on:
+  workflow_dispatch:
+
   pull_request:
     paths:
       - "assets/**"

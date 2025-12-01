@@ -1,6 +1,8 @@
 name: E2E Test - Installer (7Zip)
 
 on:
+  workflow_dispatch:
+
   pull_request:
     paths:
       - "api/**"
@@ -51,18 +53,6 @@ jobs:
       - name: Run Docker Container
         run: docker run -d --name pr-container -p 8000:8000 -e "MYSQL_URI=${{ secrets.MYSQL_URI }}" ${{ steps.meta.outputs.tags }}
 
-      - name: Install Wine
-        run: |
-          sudo dpkg --add-architecture i386
-          
-          sudo mkdir -pm755 /etc/apt/keyrings
-          sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-          
-          sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
-          
-          sudo apt-get update
-          sudo apt-get install -y --install-recommends winehq-stable xvfb
-
       - name: Install Cypress (CI-only)
         run: |
           npm init -y
@@ -76,31 +66,23 @@ jobs:
           wait-on: "http://localhost:8000"
           wait-on-timeout: 120
 
+      - name: Make scripts executable
+        run: chmod +x .github/scripts/*.sh
+
       - name: Run and Verify Installer
-        shell: bash
         run: |
-          echo "Starting silent installer with Wine..."
-          xvfb-run --auto-servernum wine64 ./cypress/downloads/installer.exe /S /LOG install.log
+          echo "Starting Docker container..."
           
-          echo "Waiting for Wine processes to complete..."
-          wineserver -w
-          
-          echo "Installer process finished."
-
-          if [ -f "install.log" ]; then
-            echo "--- Displaying contents of install.log ---"
-            cat install.log
-          else
-            echo "Error: install.log was not created."
-          fi
-
-          installPath="$HOME/.wine/drive_c/Program Files/7-Zip/7z.exe"
-          if [ -f "$installPath" ]; then
-            echo "Installation successful!"
-          else
-            echo "Error: Installation failed! File not found at $installPath"
-            exit 1
-          fi
+          # We run the script that is already part of the repo (mounted in /workspace)
+          docker run --rm \
+            --network="host" \
+            -v "$(pwd):/workspace" \
+            -w /workspace \
+            --entrypoint /bin/bash \
+            -u 0 \
+            -e WINEDEBUG=-all \
+            scottyhardy/docker-wine:stable-10.0 \
+            ./.github/scripts/run_wine_test.sh
 
       - name: Stop Docker Container
         if: always()
