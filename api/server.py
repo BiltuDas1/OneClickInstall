@@ -26,6 +26,7 @@ app.add_middleware(
 # Mount the assets folder at root URL
 app.mount("/css", StaticFiles(directory="assets/css/", html=True), name="css")
 app.mount("/js", StaticFiles(directory="assets/js/", html=True), name="js")
+app.mount("/icons", StaticFiles(directory="assets/icons/", html=True), name="icons")
 templates = Jinja2Templates(directory="assets/")
 
 # Serve homepage

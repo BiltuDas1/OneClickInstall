@@ -13,9 +13,43 @@ let currentCategory = 'all';
 
 const appContainer = document.getElementById('appContainer');
 const selectedCountSpan = document.getElementById('selectedCount');
-const btnCountSpan = document.getElementById('btnCount');
 const installBtn = document.getElementById('installBtn');
-const searchInput = document.getElementById('searchInput');
+const dynamicCategoriesList = document.getElementById('dynamicCategories');
+
+function mapBackendCategory(backendCategory) {
+    return backendCategory.trim().toLowerCase();
+}
+
+const lazyLoadIcons = () => {
+    
+    const lazyImages = document.querySelectorAll('img[data-src]');
+    
+    if ('loading' in HTMLImageElement.prototype) {
+      lazyImages.forEach(img => {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+      })
+        return; 
+    }
+        
+    const observerOptions = {
+      rootMargin: '0px 0px 50px 0px',
+      threshold:0.01,
+    };
+
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src; 
+                img.removeAttribute('data-src'); 
+                observer.unobserve(img); 
+            }
+        });
+    }, observerOptions);
+
+    lazyImages.forEach(img => imageObserver.observe(img));
+};
 
 installBtn.onclick = handleInstall;
 
@@ -56,7 +90,7 @@ async function fetchData() {
       appsData = response.data.result.map(app => ({
         id: app.id,
         name: app.app_name || app.name,
-        category: app.category || 'misc',
+        category: mapBackendCategory(app.category),
         desc: app.description || 'No description available',
 
         icon_id: app.icon_id || app.id,
@@ -65,6 +99,7 @@ async function fetchData() {
 
       sidebarCounts();
       renderApps();
+      lazyLoadIcons();
 
     } else {
       throw new Error('Backend returned status: false or invalid result format.');
@@ -158,19 +193,27 @@ function renderApps() {
     card.onclick = () => toggleSelection(app.id);
 
     card.innerHTML = `
-            <div class="card-top">
-                <div class="app-icon" style="background-color: ${app.color};">
-                    <img src="icons/${app.icon_id}.png" alt="${app.name} Icon">
-                </div>
-                <div class="app-details"><h3>${app.name}</h3><p>${app.desc}</p></div>
-            </div>
-            <div class="card-bottom">
-                <div class="select-text">${isSelected ? '<i class="fa-solid fa-check"></i> Selected (Click to Remove)' : 'Click to select'}</div>
-                <button class="add-btn">${isSelected ? 'Added' : '+ Add'}</button>
-            </div>
-        `;
+    <div class="card-top">
+        <div class="app-icon fallback-container" style="background-color: transparent;">
+            <img 
+                data-src="icons/${app.icon_id}.png" 
+                alt="${app.name} Icon"
+                class="lazy-icon"
+                loading="lazy" 
+                onerror="this.parentElement.style.backgroundColor='${app.color || '#cccccc'}';"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+            >
+        </div>
+        <div class="app-details"><h3>${app.name}</h3><p>${app.desc}</p></div>
+    </div>
+    <div class="card-bottom">
+        <div class="select-text">${isSelected ? '<i class="fa-solid fa-check"></i> Selected (Click to Remove)' : 'Click to select'}</div>
+        <button class="add-btn">${isSelected ? 'Added' : '+ Add'}</button>
+    </div>  `;
+
     appContainer.appendChild(card);
   });
+  lazyLoadIcons();
 }
 
 function toggleSelection(id) {
@@ -216,19 +259,28 @@ function searchApps() {
     card.onclick = () => toggleSelection(app.id);
 
     card.innerHTML = `
-            <div class="card-top">
-                <div class="app-icon" style="background-color: ${app.color};">
-                    <img src="icons/${app.icon_id}.png" alt="${app.name} Icon">
-                </div>
-                <div class="app-details"><h3>${app.name}</h3><p>${app.desc}</p></div>
-            </div>
-            <div class="card-bottom">
-                <div class="select-text">${isSelected ? '<i class="fa-solid fa-check"></i> Selected (Click to Remove)' : 'Click to select'}</div>
-                <button class="add-btn">${isSelected ? 'Added' : '+ Add'}</button>
-            </div>
-        `;
+    <div class="card-top">
+        <div class="app-icon fallback-container" style="background-color: transparent;">
+           <img 
+                data-src="icons/${app.icon_id}.png" 
+                alt="${app.name} Icon"
+                class="lazy-icon"
+                loading="lazy"  
+                onerror="this.parentElement.style.backgroundColor='${app.color || '#cccccc'}';"
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" 
+            >
+        </div>
+        <div class="app-details"><h3>${app.name}</h3><p>${app.desc}</p></div>
+    </div>
+    <div class="card-bottom">
+        <div class="select-text">${isSelected ? '<i class="fa-solid fa-check"></i> Selected (Click to Remove)' : 'Click to select'}</div>
+        <button class="add-btn">${isSelected ? 'Added' : '+ Add'}</button>
+    </div>
+`;
     appContainer.appendChild(card);
+
   });
+  lazyLoadIcons();
 }
 
 function Footer() {
@@ -247,12 +299,38 @@ function Footer() {
 }
 
 function sidebarCounts() {
-  document.getElementById('count-all').innerText = appsData.length;
-  const countCat = (cat) => appsData.filter(a => a.category === cat).length;
-  document.getElementById('count-browsers').innerText = countCat('browsers');
-  document.getElementById('count-development').innerText = countCat('development');
-  document.getElementById('count-multimedia').innerText = countCat('multimedia');
-  document.getElementById('count-utilities').innerText = countCat('utilities');
+    const categoryMap = {}; 
+    appsData.forEach(app => {
+        const cat = app.category;
+        categoryMap[cat] = (categoryMap[cat] || 0) + 1;
+    });
+
+    renderSidebarCategories(categoryMap); 
+    
+    document.getElementById('count-all').innerText = appsData.length;
+}
+
+function renderSidebarCategories(categoryMap) {
+    const sidebarList = document.getElementById('dynamicCategories'); 
+    let html = '';
+
+    sidebarList.innerHTML = ''; 
+
+    const sortedCategories = Object.entries(categoryMap).sort(([nameA], [nameB]) => nameA.localeCompare(nameB));
+
+    for (const [categoryName, count] of sortedCategories) {
+        
+        const displayCategory = categoryName.charAt(0).toUpperCase() + categoryName.slice(1);
+        
+        html += `
+            <li onclick="filterCategory('${categoryName}', this)">
+                <div class="category-name">${displayCategory}</div>
+                <div class="category-count">${count}</div>
+            </li>
+        `;
+    }
+
+    sidebarList.innerHTML = html;
 }
 
 function openGuide() {
