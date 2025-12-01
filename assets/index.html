@@ -28,19 +28,16 @@
 
     <div class="container">
         <aside class="sidebar">
-            <ul id="categoryList">
-                <li class="active" onclick="filterCategory('all', this)">All Apps <span class="count"
-                        id="count-all">0</span></li>
-                <li onclick="filterCategory('browsers', this)">Browsers <span class="count" id="count-browsers">0</span>
-                </li>
-                <li onclick="filterCategory('development', this)">Development <span class="count"
-                        id="count-development">0</span></li>
-                <li onclick="filterCategory('multimedia', this)">Multimedia <span class="count"
-                        id="count-multimedia">0</span></li>
-                <li onclick="filterCategory('utilities', this)">Utilities <span class="count"
-                        id="count-utilities">0</span></li>
+            <ul>
+                   <li class="active" onclick="filterCategory('all', this)">
+                         <div class="category-name">All Apps</div>
+                         <div class="category-count" id="count-all">0</div>
+                     </li>
             </ul>
-        </aside>
+
+            <ul id="dynamicCategories">
+               </ul>
+         </aside>
 
         <main class="app-grid" id="appContainer">
         </main>
@@ -82,9 +79,8 @@
                 </div>
                 <div class="step">
                     <div class="step-icon">4</div>
-                    <p><strong>Initiate Download:</strong> Click the large green <b>INSTALL</b> button to
-                        start
-                        the bundled download process.</p>
+                    <p><strong>Download:</strong> Click the large green <b> INSTALL </b>  button to
+                        start  the  download process.</p>
                 </div>
                 <!-- <div class="step">
                     <div class="step-icon">5</div>

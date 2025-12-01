@@ -33,21 +33,33 @@ header {
 }
 
 .how-to-use-btn {
-    background: transparent;
-    border: 2px solid #2563eb;
-    color: #2563eb;
-    padding: 8px 15px;
-    border-radius: 6px;
+    background: transparent;             /* #e0f2fe */
+    border: 1px solid #93c5fd;
+    color: #1e40af;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease-in-out;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
+.how-to-use-btn i {
+    font-size: 1.1em;
+    color: #1d4ed8; 
+}
+
 .how-to-use-btn:hover {
-    background: #eff6ff;
+    background: #bfdbfe;
+    border-color: #60a5fa;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.how-to-use-btn:active {
+    transform: translateY(1px); 
 }
 
 .search-bar {
@@ -147,8 +159,9 @@ header {
 }
 
 .app-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    cursor:pointer;
 }
 
 .app-card.selected {
@@ -221,6 +234,8 @@ header {
     border-radius: 6px;
     cursor: pointer;
 }
+
+
 
 .app-card.selected .add-btn {
     background: #22c55e;
@@ -367,6 +382,7 @@ header {
 
 .step p strong {
     color: #333;
+    
 }
 
 
