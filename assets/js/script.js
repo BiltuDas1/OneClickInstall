@@ -79,6 +79,10 @@ installBtn.onclick = handleInstall;
 // }
 
 async function fetchData() {
+  appContainer.classList.add('loading-state');
+  appContainer.innerHTML = `<div class="loading-message">
+        <i class="fa-solid fa-spinner fa-spin fa-3x"></i> <p style="margin-top: 15px; font-size: 1.2em;">Loading Apps...</p>
+    </div>`;
 
   try {
 
@@ -96,16 +100,19 @@ async function fetchData() {
         icon_id: app.icon_id || app.id,
         color: app.color || '#333333'
       }));
+      appContainer.classList.remove('loading-state');
 
       sidebarCounts();
       renderApps();
       lazyLoadIcons();
 
     } else {
+      appContainer.classList.remove('loading-state');
       throw new Error('Backend returned status: false or invalid result format.');
     }
 
   } catch (error) {
+    appContainer.classList.remove('loading-state');
     console.error("Failed to fetch app data from backend:", error);
     appContainer.innerHTML = `<div style="text-align: center; padding: 40px; color: red;">
                                     <i class="fa-solid fa-triangle-exclamation"></i> Error: Could not fetch data from ${API_BASE_URL}${API_ENDPOINTS.fetch}.

@@ -389,3 +389,23 @@ header {
 .hidden {
     display: none;
 }
+
+#appContainer.loading-state {
+    display: flex;
+    justify-content: center; 
+    align-items: center;    
+    min-height: 500px; 
+    width: 100%;
+    
+    gap: 0; 
+}
+
+.loading-message {
+    text-align: center;
+    color: #1d4ed8; 
+    padding: 20px;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
